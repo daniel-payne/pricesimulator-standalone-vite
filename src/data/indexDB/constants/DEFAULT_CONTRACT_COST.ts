@@ -1,0 +1,1 @@
+export const DEFAULT_CONTRACT_COST = 7.0

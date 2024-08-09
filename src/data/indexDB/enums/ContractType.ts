@@ -1,0 +1,1 @@
+export type ContractType = "BUY-UNDERLYING" | "SELL-UNDERLYING" | "BUY-OPTION" | "SELL-OPTION"

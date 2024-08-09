@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+
+:root {
+  --text-a: rgba(255, 255, 255, 1);
+  --text-b: rgba(230, 230, 230, 1);
+  --text-c: rgba(200, 200, 200, 1);
+  --text-d: rgba(150, 150, 150, 1);
+  --text-e: rgba(102, 102, 102, 1);
+  --text-inactive: rgba(8, 112, 153, 1);
+  --text-active: rgba(2, 153, 204, 1);
+
+  --background-a: rgba(30, 30, 30, 1);
+  --background-b: rgba(40, 40, 40, 1);
+  --background-c: rgba(50, 50, 50, 1);
+  --background-d: rgba(71, 71, 71, 1);
+
+  --primary-a: rgba(45, 67, 86, 1);
+  --primary-b: rgba(67, 91, 102, 1);
+
+  --secondary-a: rgba(167, 111, 111, 1);
+  --secondary-b: rgba(234, 178, 160, 1);
+
+  --info-a: rgba(2, 153, 204, 1);
+  --info-b: rgba(8, 112, 153, 1);
+
+  --danger-a: rgba(255, 51, 51, 1);
+  --danger-b: rgba(204, 51, 51, 1);
+
+  --warning-a: rgba(220, 212, 39, 1);
+  --warning-b: rgba(183, 179, 39, 1);
+
+  --success-a: rgba(119, 151, 51, 1);
+  --success-b: rgba(92, 120, 41, 1);
+
+  --graph-range: rgba(102, 102, 102, 1);
+  --graph-point: rgba(150, 150, 150, 1);
+  --graph-buy: rgba(56, 181, 220, 1);
+  --graph-sell: rgba(219, 212, 43, 1);
+
+  --outcome-loss: rgba(244, 85, 85, 1);
+  --outcome-partial: rgba(219, 212, 43, 1);
+  --outcome-profit: rgba(31, 158, 58, 1);
+  --outcome-neutral: rgba(2, 153, 204, 1);
+
+  --outcome-loss-50: rgba(244, 85, 85, 0.5);
+  --outcome-partial-50: rgba(219, 212, 43, 0.5);
+  --outcome-profit-50: rgba(31, 158, 58, 0.5);
+  --outcome-neutral-50: rgba(2, 153, 204, 0.5);
+
+  --outcome-loss-25: rgba(244, 85, 85, 0.25);
+  --outcome-partial-25: rgba(219, 212, 43, 0.25);
+  --outcome-profit-25: rgba(31, 158, 58, 0.25);
+  --outcome-neutral-25: rgba(2, 153, 204, 0.25);
+
+  --action-a: rgba(148, 175, 199, 1);
+  --action-b: rgba(193, 154, 154, 1);
+  --action-buy: rgba(73, 181, 201, 1);
+  --action-sell: rgba(219, 212, 43, 1);
+  --action-option: rgba(32, 160, 59, 1);
+
+  /* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+
+  .fg--heading {
+    color: var(--text-c);
+  }
+
+  .fg--subheading {
+    color: var(--text-d);
+  }
+
+  .fg--heading--active {
+    color: var(--text-active);
+  }
+
+  .bg--card {
+    background-color: var(--background-b);
+  }
+
+  .border--illustration {
+    border-color: var(--text-d);
+  }
+
+  .btn-buy {
+    /* color: var(--text-a) !important; */
+    /* background-color: var(--action-buy) !important; */
+    border-top-right-radius: 0 !important;
+  }
+
+  /* .btn-outline.btn-buy {
+    color: var(--action-buy) !important;
+    background-color: transparent !important;
+    border-color: var(--action-buy) !important;
+    border-top-right-radius: 0 !important;
+    border-width: 3px !important;
+  } */
+
+  /* .btn-outline.btn-buy:hover {
+    color: var(--text-a) !important;
+    background-color: var(--action-buy) !important;
+    border-top-right-radius: 0 !important;
+  } */
+
+  .btn-sell {
+    /* color: var(--text-a) !important;  */
+    /* background-color: var(--action-sell) !important;  */
+    border-bottom-right-radius: 0 !important;
+  }
+
+  /* .btn-outline.btn-sell {
+    color: var(--action-sell) !important; 
+    background-color: transparent !important;
+    border-color: var(--action-sell) !important;
+    border-bottom-right-radius: 0 !important;
+    border-width: 3px !important;
+  } */
+
+  /* .btn-outline.btn-sell:hover {
+    color: var(--text-a) !important;
+    background-color: var(--action-sell) !important;
+    border-bottom-right-radius: 0 !important;
+  } */
+
+  /* .btn.btn-xs.btn-buy,.btn.btn-xs.btn-sell {
+    color: var(--text-e) !important;
+  } */
+
+  .bg-profit {
+    background-color: var(--outcome-profit-25) !important;
+  }
+
+  .bg-loss {
+    background-color: var(--outcome-loss-25) !important;
+  }
+
+  .bg-neutral {
+    background-color: var(--outcome-neutral-25) !important;
+  }
+
+  .border-profit {
+    border-color: var(--outcome-profit) !important;
+  }
+
+  .border-loss {
+    border-color: var(--outcome-loss) !important;
+  }
+
+  .text-profit {
+    color: var(--outcome-profit) !important;
+  }
+
+  .outline-profit {
+    border-color: var(--outcome-profit-25) !important;
+    border-width: 1px !important;
+  }
+
+  .outline-loss {
+    border-color: var(--outcome-loss-25) !important;
+    border-width: 1px !important;
+  }
+
+  .outline-neutral {
+    border-color: var(--outcome-neutral-25) !important;
+    border-width: 1px !important;
+  }
+
+  .text-neutral {
+    color: var(--outcome-neutral) !important;
+  }
+
+  .text-loss {
+    color: var(--outcome-loss) !important;
+  }
+
+  /* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+
+  .fg-price-info--closed {
+    color: var(--text-d);
+  }
+  .fg-price-info--profit {
+    color: var(--outcome-profit);
+  }
+  .fg-price-info--loss {
+    color: var(--outcome-loss);
+  }
+  .fg-price-info--no-movement {
+    color: var(--outcome-neutral);
+  }
+}
+
+/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+div#root {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
