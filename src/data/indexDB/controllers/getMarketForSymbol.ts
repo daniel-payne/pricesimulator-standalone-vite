@@ -3,7 +3,7 @@ import db from "@/data/indexDB/db"
 import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 
 import { controller as getMarkets } from "./getMarkets"
-import { Market } from "../../types/Market"
+import { Market } from "../types/Market"
 
 const CACHE: Record<string, Market | undefined | null> = {}
 

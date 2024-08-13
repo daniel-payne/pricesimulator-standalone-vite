@@ -41,7 +41,7 @@ export const MarketDisplay = ({ market, showJson = false }: { market?: Market; s
   if (market == null) return null
 
   return (
-    <div className="w-1/6 p-2" data-name="MarketDisplay" key={market.symbol}>
+    <div className="w-96 p-2" data-name="MarketDisplay" key={market.symbol}>
       <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
         <div className="text-primary text-xl font-bold">{market.symbol}</div>
         {showJson && <pre>{JSON.stringify(market, null, 2)}</pre>}

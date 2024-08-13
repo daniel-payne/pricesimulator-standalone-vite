@@ -7,7 +7,7 @@ import { TradeStatus } from "../enums/TradeStatus"
 
 export default function useInactiveTrades(newestFirst = true, limit: number | undefined = undefined): Array<Trade> | undefined {
   const market = useLiveQuery(async () => {
-    const collection = await db.trades?.where({ status: TradeStatus.CLOSED })
+    const collection = await db.trades?.where({ status: TradeStatus.Closed })
 
     let array = await collection.sortBy("exitTimestamp")
 

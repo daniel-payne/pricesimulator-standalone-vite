@@ -5,7 +5,7 @@ import db from "@/data/indexDB/db"
 import type { Scenario } from "@/data/indexDB/types/Scenario"
 import { useEffect } from "react"
 
-import getScenarios from "../controllers/get/getScenarios"
+import getScenarios from "../controllers/getScenarios"
 import compareObjectsBy from "@/utilities/compareObjectsBy"
 
 export default function useScenarios(): Array<Scenario> | undefined {

@@ -30,7 +30,7 @@ export default function DatasPage({ name = "DatasPage", ...rest }: PropsWithChil
         <div className="flex-auto flex flex-row flex-wrap gap-0">
           {datas?.map((data) => {
             return (
-              <div className="w-1/6 p-2" key={data.symbol}>
+              <div className="w-96 p-2" key={data.symbol}>
                 <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
                   <div className="text-primary text-xl font-bold">{data.symbol}</div>
                   {showJson && <pre>{JSON.stringify(data, null, 2)}</pre>}

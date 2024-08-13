@@ -2,8 +2,8 @@ import db from "@/data/indexDB/db"
 
 import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 import generateID from "@/utilities/generateID"
-import getTimer from "../get/getTimer"
-import { Transaction } from "../../types/Transaction"
+import getTimer from "./getTimer"
+import { Transaction } from "../types/Transaction"
 
 export async function controller(db: PriceSimulatorDexie, value: number, source?: string, timestamp?: number, reference?: string) {
   const timer = await getTimer()

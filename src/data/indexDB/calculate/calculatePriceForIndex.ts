@@ -23,7 +23,9 @@ export default async function calculatePriceForIndex(
   let price: Price | undefined
 
   if (indexEnd != null) {
+    const isMarketActive = true
     const isMarketClosed = index <= 0
+
     const maxIndex = timestamps.length - 1
 
     let priorIndex
@@ -76,8 +78,8 @@ export default async function calculatePriceForIndex(
       priorOpen = opens[priorIndex]
       priorClose = closes[priorIndex]
 
-      priorClosingBid = priorClose * (1 + spread)
-      priorClosingAsk = priorClose * (1 - spread)
+      priorClosingAsk = priorClose * (1 + spread)
+      priorClosingBid = priorClose * (1 - spread)
     }
 
     if (currentIndex != null && currentIndex <= maxIndex) {
@@ -92,11 +94,11 @@ export default async function calculatePriceForIndex(
       currentMidRangePrice = Math.random() * (currentHigh - currentLow) + currentLow
       currentMidDayPrice = Math.random() * Math.abs(currentOpen - currentClose) + Math.min(currentOpen, currentClose)
 
-      currentBid = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 + spread)
-      currentAsk = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 - spread)
+      currentAsk = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 + spread)
+      currentBid = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 - spread)
 
-      currentClosingBid = currentClose * (1 + spread)
-      currentClosingAsk = currentClose * (1 - spread)
+      currentClosingAsk = currentClose * (1 + spread)
+      currentClosingBid = currentClose * (1 - spread)
 
       hasIntraDayPrices = !(currentOpen === currentClose && currentHigh === currentLow)
     }
@@ -107,8 +109,8 @@ export default async function calculatePriceForIndex(
       nextTimestampDay = formatTimestampDay(nextTimestamp)
       nextOpen = opens[nextIndex]
 
-      nextOpeningBid = nextOpen * (1 + spread)
-      nextOpeningAsk = nextOpen * (1 - spread)
+      nextOpeningAsk = nextOpen * (1 + spread)
+      nextOpeningBid = nextOpen * (1 - spread)
     }
 
     price = {
@@ -116,6 +118,7 @@ export default async function calculatePriceForIndex(
 
       currentIndex,
 
+      isMarketActive,
       isMarketClosed,
 
       currentTimestamp,

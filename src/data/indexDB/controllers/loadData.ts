@@ -4,12 +4,12 @@ import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 
 import { setState, StoragePersistence } from "@keldan-systems/state-mutex"
 
-import { controller as getScenarios } from "@/data/indexDB/controllers/get/getScenarios"
-import { controller as getMarkets } from "@/data/indexDB/controllers/get/getMarkets"
-import { controller as getTimer } from "@/data/indexDB/controllers/get/getTimer"
-import { controller as getDataForSymbol } from "@/data/indexDB/controllers/get/getDataForSymbol"
-import { controller as updatePrice } from "@/data/indexDB/controllers/update/updatePrice"
-import { controller as addTransaction } from "@/data/indexDB/controllers/add/addTransaction"
+import { controller as getScenarios } from "@/data/indexDB/controllers/getScenarios"
+import { controller as getMarkets } from "@/data/indexDB/controllers/getMarkets"
+import { controller as getTimer } from "@/data/indexDB/controllers/getTimer"
+import { controller as getDataForSymbol } from "@/data/indexDB/controllers/getDataForSymbol"
+import { controller as updatePrice } from "@/data/indexDB/controllers/recalculatePrices"
+import { controller as addTransaction } from "@/data/indexDB/controllers/addTransaction"
 
 export async function controller(db: PriceSimulatorDexie) {
   setState("APPLICATION-STATUS", { message: "Loading Timer", dataLoaded: false }, StoragePersistence.local)

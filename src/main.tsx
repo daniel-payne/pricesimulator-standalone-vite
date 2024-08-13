@@ -26,6 +26,7 @@ import ActiveTradesPage from "./routes/pages/ActiveTradesPage"
 import InactiveTradesPage from "./routes/pages/InactiveTradesPage"
 import MarketForSymbolPage from "./routes/pages/MarketForSymbolPage"
 import PriceForSymbolPage from "./routes/pages/PriceForSymbolPage"
+import OHLCPage from "./routes/pages/OHLCPage"
 
 const router = createBrowserRouter([
   {
@@ -118,7 +119,20 @@ const router = createBrowserRouter([
     element: <ActionsPage className="h-full w-full" />,
     errorElement: <ErrorPage className="h-full w-full" />,
   },
+  {
+    path: "/ohlc/:symbol",
+    element: <OHLCPage className="h-full w-full" />,
+    errorElement: <ErrorPage className="h-full w-full" />,
+  },
 ])
+
+document.title = window.location.pathname.replace("/", "")
+
+router.subscribe((route) => {
+  const name = route.location.pathname.replace("/", "")
+
+  document.title = name
+})
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

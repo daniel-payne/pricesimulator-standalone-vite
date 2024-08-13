@@ -28,7 +28,7 @@ export default function ScenariosPage({ name = "ScenariosPage", ...rest }: Props
         <div className="flex-auto flex flex-row flex-wrap gap-0">
           {scenarios?.map((scenario) => {
             return (
-              <div className="w-1/6 p-2" key={scenario.code}>
+              <div className="w-96 p-2" key={scenario.code}>
                 <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
                   <div className="text-primary text-xl font-bold">{scenario.code}</div>
                   {showJson && <pre>{JSON.stringify(scenario, null, 2)}</pre>}

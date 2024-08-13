@@ -1,11 +1,11 @@
-import db from "../../db"
+import db from "../db"
 
-import { ScenarioSpeed } from "../../enums/ScenarioSpeed"
+import { ScenarioSpeed } from "../enums/ScenarioSpeed"
 
-import type { PriceSimulatorDexie } from "../../db"
-import type { Timer } from "../../types/Timer"
+import type { PriceSimulatorDexie } from "../db"
+import type { Timer } from "../types/Timer"
 
-import { DEFAULT_START } from "../../constants/DEFAULT_START"
+import { DEFAULT_START } from "../constants/DEFAULT_START"
 
 export async function controller(db: PriceSimulatorDexie, newValues: Timer = {}) {
   const id = db.id

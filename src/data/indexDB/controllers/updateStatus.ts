@@ -1,8 +1,8 @@
-import db from "../../db"
+import db from "../db"
 
-import type { PriceSimulatorDexie } from "../../db"
+import type { PriceSimulatorDexie } from "../db"
 
-import type { Status } from "../../types/Status"
+import type { Status } from "../types/Status"
 
 export async function controller(db: PriceSimulatorDexie, symbol: string, newValues: Status = {}) {
   const currentStatus = await db.statuses.get(symbol)

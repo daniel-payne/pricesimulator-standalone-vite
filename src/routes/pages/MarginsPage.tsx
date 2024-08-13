@@ -29,7 +29,7 @@ export default function MarginsPage({ name = "MarginsPage", ...rest }: PropsWith
         <div className="flex-auto flex flex-row flex-wrap gap-0">
           {margins?.map((margin) => {
             return (
-              <div className="w-1/6 p-2" key={margin.id}>
+              <div className="w-96 p-2" key={margin.id}>
                 <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
                   <div className="text-primary text-xl font-bold">{margin.id}</div>
                   {showJson && <pre>{JSON.stringify(margin, null, 2)}</pre>}

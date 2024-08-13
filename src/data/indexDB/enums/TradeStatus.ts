@@ -1,4 +1,6 @@
 export enum TradeStatus {
-  OPEN = "OPEN",
-  CLOSED = "CLOSED",
+  Open = "OPEN",
+  Closed = "CLOSED", // Closed by user
+  Curtailed = "CURTAILED", // Closed on margin call
+  Expired = "EXPIRED", // Closed on expiry
 }

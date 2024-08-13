@@ -19,85 +19,85 @@ export default function HomePage({ name = "HomePage", ...rest }: PropsWithChildr
         <div className="divider">Singletons </div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/timer" className="w-64 btn btn-secondary">
-            useTimer
+            Timer
           </Link>
           <Link to="/balance" className="w-64 btn btn-secondary">
-            useBalance
+            Balance
           </Link>
         </div>
         <div className="divider">Server</div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/scenarios" className="w-64 btn btn-secondary">
-            useScenarios
+            Scenarios
           </Link>
           <Link to="/markets" className="w-64 btn btn-secondary">
-            useMarkets
+            Markets
           </Link>
           <Link to="/datas" className="w-64 btn btn-secondary">
-            useDatas
+            Data
           </Link>
         </div>
         <div className="divider">Local</div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/quotes" className="w-64 btn btn-secondary">
-            useQuotes
+            Quotes
           </Link>
           <Link to="/trades" className="w-64 btn btn-secondary">
-            useTrades
+            Trades
           </Link>
           <Link to="/transactions" className="w-64 btn btn-secondary">
-            useTransactions
+            Transactions
           </Link>
         </div>
         <div className="divider">Computed</div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/statuses" className="w-64 btn btn-secondary">
-            useStatuses
+            Statuses
           </Link>
           <Link to="/prices" className="w-64 btn btn-secondary">
-            usePrices
+            Prices
           </Link>
           <Link to="/margins" className="w-64 btn btn-secondary">
-            useMargins
+            Margins
           </Link>
         </div>
         <div className="divider">Markets Views</div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/marketsByCategory" className="w-64 btn btn-secondary">
-            MarketsByCategory
+            Markets By Category
           </Link>
         </div>
         <div className="divider">Trades Views</div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/activeTrades" className="w-64 btn btn-secondary">
-            useActiveTrades
+            Active Trades
           </Link>
           <Link to="/inactiveTrades" className="w-64 btn btn-secondary">
-            useInactiveTrades
+            Inactive Trades
           </Link>
         </div>
         <div className="divider">For ID</div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/tradeForID" className="w-64 btn btn-secondary">
-            TradeForID
+            Trade For ID
           </Link>
           <Link to="/marginForID" className="w-64 btn btn-secondary">
-            MarginForID
+            Margin For ID
           </Link>
         </div>
         <div className="divider">For Symbol</div>
         <div className="m-4 flex flex-row flex-wrap gap-4">
           <Link to="/marketForSymbol" className="w-64 btn btn-secondary">
-            useMarketForSymbol
+            Market For Symbol
           </Link>
           <Link to="/priceForSymbol" className="w-64 btn btn-secondary">
-            usePriceForSymbol
+            Price For Symbol
           </Link>
           <Link to="/dataForSymbol" className="w-64 btn btn-secondary  btn-outline">
-            DataForSymbol
+            Data For Symbol
           </Link>
           <Link to="/quoteForSymbol" className="w-64 btn btn-secondary btn-outline">
-            QuoteForSymbol
+            Quote For Symbol
           </Link>
         </div>
       </div>

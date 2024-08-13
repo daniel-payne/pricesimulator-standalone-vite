@@ -30,7 +30,7 @@ export default function TransactionsPage({ name = "TransactionsPage", ...rest }:
         <div className="flex-auto flex flex-row flex-wrap gap-0">
           {transactions?.map((transaction) => {
             return (
-              <div className="w-1/6 p-2" key={transaction.id}>
+              <div className="w-full p-2" key={transaction.id}>
                 <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
                   <div className="text-primary text-xl font-bold">{transaction.id}</div>
                   {showJson && <pre>{JSON.stringify(transaction, null, 2)}</pre>}

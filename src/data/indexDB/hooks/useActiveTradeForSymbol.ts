@@ -7,7 +7,7 @@ import { TradeStatus } from "../enums/TradeStatus"
 
 export default function useActiveTradeForSymbol(symbol: string | undefined | null = "NO-MATCH"): Trade | null | undefined {
   const trade = useLiveQuery(async () => {
-    const data = await db.trades?.where({ symbol, status: TradeStatus.OPEN }).first()
+    const data = await db.trades?.where({ symbol, status: TradeStatus.Open }).first()
 
     return data
   }, [symbol])

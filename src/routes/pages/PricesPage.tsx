@@ -24,7 +24,7 @@ export default function PricesPage({ name = "PricesPage", ...rest }: PropsWithCh
             Home
           </Link>
           <div className="text-secondary text-2xl font-bold">Prices</div>
-          <button className="btn btn-primary btn-ghost btn-sm" onClick={() => setShowJson(!showJson)}>
+          <button className="btn  btn-ghost btn-sm" onClick={() => setShowJson(!showJson)}>
             json
           </button>
         </div>
@@ -42,15 +42,26 @@ export const PriceDisplay = ({ price, showJson = false }: { price?: Price; showJ
   if (price == null) return null
 
   return (
-    <div className="w-1/6 p-2" key={price.symbol}>
+    <div className="w-96 p-2" key={price.symbol}>
       <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
-        <div className="text-primary text-xl font-bold">{price.symbol}</div>
+        <div className="flex flex-row flex-wrap gap-2 items-center justify-between">
+          <div className="text-primary text-xl font-bold">{price.symbol}</div>
+          <Link to={`/ohlc/${price.symbol}`} className="text-secondary text-sm p-2">
+            OHLC
+          </Link>
+        </div>
         {showJson && <pre>{JSON.stringify(price, null, 2)}</pre>}
-        <div className="text-secondary font-bold">{formatTimestamp(price?.currentTimestamp)}</div>
-        <div className="text-secondary">{price?.isMarketClosed ? "CLOSED" : "open"}</div>
-        <div className="text-secondary">{price?.priorClose}</div>
+        <div className="text-secondary ">
+          <strong>{formatTimestamp(price?.currentTimestamp ?? price?.priorTimestamp)}</strong>
+          &nbsp;
+          <span>{price?.isMarketActive && price?.isMarketClosed ? "CLOSED" : ""}</span>
+        </div>
         <div className="text-secondary">
-          {price?.currentOpen} - {price?.currentHigh} / {price?.currentLow} - {price?.currentClose}
+          {price?.isMarketActive ? "active" : "INACTIVE"} {formatTimestamp(price.firstActiveTimestamp)}
+        </div>
+        <div className="text-secondary">{price?.priorClose} &nbsp;</div>
+        <div className="text-secondary">
+          {price?.currentOpen} - {price?.currentHigh} / {price?.currentLow} - {price?.currentClose} &nbsp;
         </div>
         {/* <div className="text-secondary font-bold">
         {market?.contractSize} {market?.contractUnit}&nbsp;

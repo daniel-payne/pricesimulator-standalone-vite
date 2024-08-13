@@ -29,7 +29,7 @@ export default function QuotesPage({ name = "QuotesPage", ...rest }: PropsWithCh
         <div className="flex-auto flex flex-row flex-wrap gap-0">
           {quotes?.map((quote) => {
             return (
-              <div className="w-1/6 p-2" key={quote.id}>
+              <div className="w-96 p-2" key={quote.id}>
                 <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
                   <div className="text-primary text-xl font-bold">{quote.id}</div>
                   {showJson && <pre>{JSON.stringify(quote, null, 2)}</pre>}

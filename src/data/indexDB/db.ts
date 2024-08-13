@@ -2,7 +2,7 @@ import Dexie, { Table } from "dexie"
 
 import generateID from "@/utilities/generateID"
 
-import { controller as loadData } from "@/data/indexDB/controllers/load/loadData"
+import { controller as loadData } from "@/data/indexDB/controllers/loadData"
 
 import type { Quote } from "./types/Quote"
 import type { Trade } from "./types/Trade"
@@ -45,7 +45,7 @@ export class PriceSimulatorDexie extends Dexie {
   constructor() {
     super("PriceSimulator")
 
-    this.version(36).stores({
+    this.version(38).stores({
       timer: "id",
       balance: "id",
 
@@ -56,8 +56,7 @@ export class PriceSimulatorDexie extends Dexie {
       data: "symbol",
       prices: "symbol",
 
-      quotes: "symbol",
-
+      quotes: "id, symbol",
       trades: "id, symbol, status, [symbol+status]",
       margins: "id, symbol, status, [symbol+status] ",
 

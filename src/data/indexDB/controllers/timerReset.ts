@@ -1,10 +1,10 @@
-import db from "../../db"
+import db from "../db"
 
-import updateTimer from "../update/updateTimer"
+import updateTimer from "./updateTimer"
 
-import type { PriceSimulatorDexie } from "../../db"
+import type { PriceSimulatorDexie } from "../db"
 import timerNextDay from "./timerNextDay"
-import { DEFAULT_START } from "../../constants/DEFAULT_START"
+import { DEFAULT_START } from "../constants/DEFAULT_START"
 
 export async function controller(db: PriceSimulatorDexie, day: string) {
   if (db.timeout != null) {

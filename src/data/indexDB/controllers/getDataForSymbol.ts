@@ -5,7 +5,7 @@ import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 import loadDataForSymbol from "@/data/server/load/loadDataForSymbol"
 
 import Dexie from "dexie"
-import updateStatus from "../update/updateStatus"
+import updateStatus from "./updateStatus"
 
 const TIMEGAP_CUTOFF = 10
 

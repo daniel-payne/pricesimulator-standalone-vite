@@ -29,7 +29,7 @@ export default function InactiveTradesPage({ name = "InactiveTradesPage", ...res
         <div className="flex-auto flex flex-row flex-wrap gap-0">
           {trades?.map((trades) => {
             return (
-              <div className="w-1/6 p-2" key={trades.id}>
+              <div className="w-96 p-2" key={trades.id}>
                 <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
                   <div className="text-primary text-xl font-bold">{trades.id}</div>
                   {showJson && <pre>{JSON.stringify(trades, null, 2)}</pre>}

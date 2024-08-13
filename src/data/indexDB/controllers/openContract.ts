@@ -1,20 +1,21 @@
 import db from "@/data/indexDB/db"
 
-import closeContract from "../close/closeContract"
+import closeContract from "./closeTrade"
 
 import type { PriceSimulatorDexie } from "@/data/indexDB/db"
-import getTimer from "../get/getTimer"
+import getTimer from "./getTimer"
 
-import getMarketForSymbol from "../get/getMarketForSymbol"
+import getMarketForSymbol from "./getMarketForSymbol"
 import generateID from "@/utilities/generateID"
 
-import { DEFAULT_CONTRACT_COST } from "../../constants/DEFAULT_CONTRACT_COST"
+import { DEFAULT_CONTRACT_COST } from "../constants/DEFAULT_CONTRACT_COST"
 import lastOfMonth from "@/utilities/lastOfMonth"
 import { TradeStatus } from "@/data/indexDB/enums/TradeStatus"
+import { TradeDirection } from "../enums/TradeDirection"
 
-export async function controller(db: PriceSimulatorDexie, symbol: string, direction: "CALL" | "PUT", size: 0.25 | 0.5 | 1 | 2) {
-  const count = await db.trades?.where({ status: TradeStatus.OPEN }).count()
-  const activeTrades = await db.trades?.where({ symbol, status: TradeStatus.OPEN }).toArray()
+export async function controller(db: PriceSimulatorDexie, symbol: string, direction: TradeDirection, size: number) {
+  const count = await db.trades?.count()
+  const activeTrades = await db.trades?.where({ symbol, status: TradeStatus.Open }).toArray()
 
   for (const trade of activeTrades) {
     await closeContract(trade.id)
@@ -27,37 +28,37 @@ export async function controller(db: PriceSimulatorDexie, symbol: string, direct
   const price = await db.prices?.where({ symbol }).first()
 
   const entryTimestamp = timer?.currentTimestamp
-  const expiryTimestamp = lastOfMonth(timer?.currentTimestamp, "WED", 3)?.getTime()
+  const expiryTimestamp = lastOfMonth(timer?.currentTimestamp, "WED", 1)?.getTime()
 
   let entryPrice
   let entryCost
 
-  if (size === 1) {
+  if (size != null) {
     if (price?.isMarketClosed) {
       entryPrice = price?.nextOpen
     } else {
       entryPrice = price?.currentClose
     }
 
-    entryCost = DEFAULT_CONTRACT_COST
+    entryCost = DEFAULT_CONTRACT_COST * size
   } else {
     if (price?.isMarketClosed) {
-      entryPrice = direction === "CALL" ? price?.nextBid : price?.nextAsk
+      entryPrice = direction === TradeDirection.Call ? price?.nextAsk : price?.nextBid
     } else {
-      entryPrice = direction === "CALL" ? price?.currentBid : price?.currentAsk
+      entryPrice = direction === TradeDirection.Call ? price?.currentAsk : price?.currentBid
     }
   }
 
   if (market != null && entryTimestamp != null && entryPrice != null) {
     const amount = size * market?.contractSize
 
-    const entryValue = amount * (market?.dollarModifier ?? 1) * entryPrice
+    const entryValue = ((entryPrice * (market?.priceModifier ?? 1)) / (market?.priceSize ?? 1)) * amount
 
     if (price != null) {
       const newContract = {
         id: generateID(),
         no: count + 1,
-        status: TradeStatus.OPEN,
+        status: TradeStatus.Open,
         symbol,
         amount,
         direction,
@@ -83,6 +84,6 @@ export async function controller(db: PriceSimulatorDexie, symbol: string, direct
   return undefined
 }
 
-export default function openContract(symbol: string, direction: "CALL" | "PUT", size: 0.25 | 0.5 | 1 | 2) {
+export default function openContract(symbol: string, direction: TradeDirection, size: number) {
   return controller(db, symbol, direction, size)
 }

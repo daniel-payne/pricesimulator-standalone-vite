@@ -4,6 +4,9 @@ import useTrades from "@/data/indexDB/hooks/useTrades"
 
 import type { HTMLAttributes, PropsWithChildren } from "react"
 import { Link } from "react-router-dom"
+import formatTimestamp from "@/utilities/formatTimestamp"
+import formatValue from "@/utilities/formatValue"
+import formatNumber from "@/utilities/formatNumber"
 
 type ComponentProps = {
   name?: string
@@ -27,18 +30,22 @@ export default function TradesPage({ name = "TradesPage", ...rest }: PropsWithCh
           </button>
         </div>
         <div className="flex-auto flex flex-row flex-wrap gap-0">
-          {trades?.map((trades) => {
+          {trades?.map((trade) => {
             return (
-              <div className="w-1/6 p-2" key={trades.id}>
+              <div className="w-96 p-2" key={trade.id}>
                 <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
-                  <div className="text-primary text-xl font-bold">{trades.id}</div>
-                  {showJson && <pre>{JSON.stringify(trades, null, 2)}</pre>}
-                  {/* <div className="text-secondary font-bold">{market?.name}&nbsp;</div>
-                  <div className="text-secondary">{market?.description}&nbsp;</div>
+                  <div className="text-primary text-xl font-bold">{trade.id}</div>
+                  {showJson && <pre>{JSON.stringify(trade, null, 2)}</pre>}
                   <div className="text-secondary font-bold">
-                    {market?.contractSize} {market?.contractUnit}&nbsp;
+                    {trade?.direction} {formatValue(trade?.entryValue, false)} {trade?.symbol}
                   </div>
-                  <div className="text-secondary">{market?.contractName}&nbsp;</div> */}
+                  <div className="text-secondary font-bold">{formatValue(trade?.profit, false)}&nbsp;</div>
+                  <div className="text-secondary">
+                    {formatTimestamp(trade?.entryTimestamp)} {formatNumber(trade?.entryPrice, 6)}
+                  </div>
+                  <div className="text-secondary">
+                    {formatTimestamp(trade?.exitTimestamp)} {formatNumber(trade?.exitPrice, 6)}
+                  </div>
                 </div>
               </div>
             )

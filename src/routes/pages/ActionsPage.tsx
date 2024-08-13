@@ -1,31 +1,67 @@
-import addTransaction from "@/data/indexDB/controllers/add/addTransaction"
-import clearData from "@/data/indexDB/controllers/clear/clearData"
-import clearUserData from "@/data/indexDB/controllers/clear/clearUserData"
-import loadData from "@/data/indexDB/controllers/load/loadData"
-import openContract from "@/data/indexDB/controllers/open/openContract"
-import timerNextDay from "@/data/indexDB/controllers/timer/timerNextDay"
-import timerReset from "@/data/indexDB/controllers/timer/timerReset"
-import timerStart from "@/data/indexDB/controllers/timer/timerStart"
-import timerStop from "@/data/indexDB/controllers/timer/timerStop"
+import addTransaction from "@/data/indexDB/controllers/addTransaction"
+import clearData from "@/data/indexDB/controllers/clearData"
+import resetTrading from "@/data/indexDB/controllers/resetTrading"
+import closeTrade from "@/data/indexDB/controllers/closeTrade"
+import loadData from "@/data/indexDB/controllers/loadData"
+import openContract from "@/data/indexDB/controllers/openContract"
+import timerNextDay from "@/data/indexDB/controllers/timerNextDay"
+import timerReset from "@/data/indexDB/controllers/timerReset"
+import timerStart from "@/data/indexDB/controllers/timerStart"
+import timerStop from "@/data/indexDB/controllers/timerStop"
 import { ScenarioSpeed } from "@/data/indexDB/enums/ScenarioSpeed"
-import formatValue from "@/utilities/formatValue"
-import { FormEvent, useState, type HTMLAttributes, type PropsWithChildren } from "react"
+import useTimer from "@/data/indexDB/hooks/useTimer"
+import formatTimestamp from "@/utilities/formatTimestamp"
+import formatTimestampDay from "@/utilities/formatTimestampDay"
+
+import { FormEvent, useEffect, useState, type HTMLAttributes, type PropsWithChildren } from "react"
 import { Link } from "react-router-dom"
 
-const DEPOSIT = 5000
-const SYMBOL = "LH.F"
-const DIRECTION = "CALL"
-const SIZE = 1
+import { TradeDirection } from "@/data/indexDB/enums/TradeDirection"
+import lastOfMonth from "@/utilities/lastOfMonth"
+
+import { OptionDirection } from "@/data/indexDB/enums/OptionDirection"
+import { OptionChoice } from "@/data/indexDB/enums/OptionChoice"
+import discoverTradeRate from "@/data/indexDB/controllers/discoverTradeRate"
+import { OptionType } from "@/data/indexDB/enums/OptionType"
+import openTrade from "@/data/indexDB/controllers/openTrade"
 
 type ComponentProps = {
   name?: string
 } & HTMLAttributes<HTMLDivElement>
 
 export default function ActionsPage({ name = "ActionsPage", ...rest }: PropsWithChildren<ComponentProps>) {
-  const [deposit, setDeposit] = useState<number | undefined>(undefined)
-  const [symbol, setSymbol] = useState<string | undefined>(undefined)
-  const [direction, setDirection] = useState<string | undefined>(undefined)
-  const [size, setSize] = useState<0.25 | 0.5 | 1 | 2 | undefined>(undefined)
+  const timer = useTimer()
+
+  const lastWedInThreeMonths = lastOfMonth(timer?.currentTimestamp, "WED", 3)?.getTime() ?? 0
+
+  const [deposit, setDeposit] = useState<number>(1000)
+
+  const [symbol, setSymbol] = useState<string>("LC.F")
+  const [amount, setAmount] = useState<number>(1000)
+  const [size, setSize] = useState<number | string>(1)
+
+  const [tradeDirection, setTradeDirection] = useState<TradeDirection>(TradeDirection.Call)
+  const [stopLoss, setStopLoss] = useState<number | undefined>(undefined)
+  const [takeProfit, setTakeProfit] = useState<number | undefined>(undefined)
+  const [contractExpiry, setContractExpiry] = useState<number>(lastWedInThreeMonths)
+
+  const [optionDirection, setOptionDirection] = useState<OptionDirection>(OptionDirection.Buy)
+  const [optionChoice, setOptionChoice] = useState<OptionChoice>(OptionChoice.Call)
+  const [optionType, setOptionType] = useState<OptionType>(OptionType.European)
+
+  const [contractId, setContractID] = useState<string | undefined>(undefined)
+  const [tradeId, setTradeID] = useState<string | undefined>(undefined)
+  const [primaryId, setPrimaryID] = useState<string | undefined>(undefined)
+
+  const [openingRate, setOpeningRate] = useState<number | undefined>(undefined)
+  const [closingRate, setClosingRate] = useState<number | undefined>(undefined)
+
+  const [primaryPrice, setPrimaryPrice] = useState<number | undefined>(undefined)
+
+  useEffect(() => {
+    const newDate = lastOfMonth(timer?.currentTimestamp, "WED", 3)?.getTime() ?? 0
+    setContractExpiry(newDate)
+  }, [timer])
 
   const handleUpdateDeposit = (e: FormEvent<HTMLInputElement>) => {
     setDeposit(+e.currentTarget.value)
@@ -35,33 +71,140 @@ export default function ActionsPage({ name = "ActionsPage", ...rest }: PropsWith
     setSymbol(e.currentTarget.value)
   }
 
-  const handleUpdateDirection = (e: FormEvent<HTMLInputElement>) => {
-    setDirection(e.currentTarget.value as any)
+  const handleUpdateTradeDirection = (e: FormEvent<HTMLInputElement>) => {
+    const direction = e.currentTarget.value as TradeDirection
+
+    setTradeDirection(direction)
+
+    if (direction === TradeDirection.Call) {
+      setOptionDirection(OptionDirection.Buy)
+      setOptionChoice(OptionChoice.Put)
+      setOptionType(OptionType.European)
+    } else {
+      setOptionDirection(OptionDirection.Buy)
+      setOptionChoice(OptionChoice.Call)
+      setOptionType(OptionType.European)
+    }
+  }
+
+  const handleUpdateOptionDirection = (e: FormEvent<HTMLInputElement>) => {
+    const direction = e.currentTarget.value as OptionDirection
+
+    setOptionDirection(direction)
+  }
+
+  const handleUpdateOptionChoice = (e: FormEvent<HTMLInputElement>) => {
+    const choice = e.currentTarget.value as OptionChoice
+
+    setOptionChoice(choice)
+  }
+
+  const handleUpdateOptionType = (e: FormEvent<HTMLInputElement>) => {
+    const type = e.currentTarget.value as OptionType
+
+    setOptionType(type)
   }
 
   const handleUpdateSize = (e: FormEvent<HTMLInputElement>) => {
-    setSize(+e.currentTarget.value as any)
+    setSize(e.currentTarget.value)
   }
 
-  const handleAddTransaction = () => {
-    addTransaction(deposit ?? DEPOSIT)
+  const handleUpdateAmount = (e: FormEvent<HTMLInputElement>) => {
+    setAmount(+e.currentTarget.value)
   }
 
-  const handleOpenContract = () => {
-    openContract(symbol ?? SYMBOL, (direction as any) ?? DIRECTION, size ?? SIZE)
+  const handleUpdateStopLoss = (e: FormEvent<HTMLInputElement>) => {
+    setStopLoss(+e.currentTarget.value as any)
+  }
+
+  const handleUpdateTakeProfit = (e: FormEvent<HTMLInputElement>) => {
+    setTakeProfit(+e.currentTarget.value as any)
+  }
+
+  const actionAddTransaction = () => {
+    addTransaction(deposit)
+  }
+
+  const actionOpenContract = async () => {
+    if (symbol == null || tradeDirection == null || size == null || Number.isNaN(size)) {
+      return
+    }
+
+    const contract = await openContract(symbol, tradeDirection, Number.parseFloat(size.toString()))
+
+    if (contract?.id != null) {
+      setContractID(contract?.id)
+    }
+  }
+
+  const actionCloseContract = async () => {
+    if (contractId != null) {
+      await closeTrade(contractId)
+
+      setContractID(undefined)
+    }
+  }
+
+  const actionDiscoverOpeningRate = async () => {
+    const openingRate = await discoverTradeRate(symbol, tradeDirection)
+
+    setOpeningRate(openingRate ?? undefined)
+  }
+
+  const actionOpenTrade = async () => {
+    if (openingRate) {
+      const trade = await openTrade(symbol, tradeDirection, amount, openingRate)
+
+      if (trade?.id != null) {
+        setTradeID(trade.id)
+        setOpeningRate(undefined)
+      }
+    }
+  }
+
+  const actionDiscoverClosingRate = async () => {
+    const direction = tradeDirection === TradeDirection.Call ? TradeDirection.Put : TradeDirection.Call
+
+    const openingRate = await discoverTradeRate(symbol, direction)
+
+    setClosingRate(openingRate ?? undefined)
+  }
+
+  const actionCloseTrade = async () => {
+    if (tradeId != null) {
+      await closeTrade(tradeId)
+
+      setTradeID(undefined)
+      setClosingRate(undefined)
+    }
+  }
+
+  const actionDiscoverPrimaryPrice = async () => {}
+  const actionOpenPrimaryOption = async () => {
+    setPrimaryPrice(undefined)
+  }
+  const actionExecutePrimaryOption = async () => {
+    setPrimaryID(undefined)
   }
 
   return (
     <div {...rest} data-component={name}>
       <div className="flex flex-col gap-2 p-3">
-        <div className="flex flex-row flex-wrap gap-2 items-center">
-          <Link to="/" className="btn btn-primary btn-sm mx-2">
-            Home
-          </Link>
-          <div className="text-secondary text-2xl font-bold">Actions</div>
+        <div className="flex flex-row flex-wrap gap-2 items-center justify-between">
+          <div className="flex flex-row flex-wrap gap-2 items-center">
+            <Link to="/" className="btn btn-primary btn-sm mx-2">
+              Home
+            </Link>
+
+            <div className="text-secondary text-2xl font-bold">Actions</div>
+          </div>
+          <div className="text-secondary  ms-6">
+            <strong>{formatTimestampDay(timer?.currentTimestamp)}</strong> {formatTimestamp(timer?.currentTimestamp)}
+          </div>
         </div>
 
         <div className="m-4 flex flex-col">
+          <div className="divider">Data</div>
           <div className="m-4 flex flex-row flex-wrap gap-4">
             <button className="btn btn-success" onClick={loadData}>
               Load Server Data
@@ -69,22 +212,24 @@ export default function ActionsPage({ name = "ActionsPage", ...rest }: PropsWith
             <button className="btn btn-error" onClick={clearData}>
               Clear All Data
             </button>
-            <button className="btn btn-warning" onClick={clearUserData}>
-              Clear User Data
+            <button className="btn btn-warning" onClick={resetTrading}>
+              Reset Trading
             </button>
           </div>
+
+          <div className="divider">Timer</div>
           <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
             <button className="btn btn-primary" onClick={() => timerNextDay(true)}>
               Next Day
             </button>
 
-            <button className="btn btn-warning" onClick={() => timerStart(ScenarioSpeed.slow)}>
+            <button className="btn btn-warning" onClick={() => timerStart(ScenarioSpeed.Slow)}>
               Slow
             </button>
-            <button className="btn btn-warning" onClick={() => timerStart(ScenarioSpeed.medium)}>
+            <button className="btn btn-warning" onClick={() => timerStart(ScenarioSpeed.Medium)}>
               Medium
             </button>
-            <button className="btn btn-warning" onClick={() => timerStart(ScenarioSpeed.fast)}>
+            <button className="btn btn-warning" onClick={() => timerStart(ScenarioSpeed.Fast)}>
               Fast
             </button>
 
@@ -103,162 +248,216 @@ export default function ActionsPage({ name = "ActionsPage", ...rest }: PropsWith
             </button>
           </div>
 
+          <div className="divider">Transactions</div>
           <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
             <label className="input input-bordered flex items-center gap-2 w-48">
-              Amount
-              <input type="text" className="grow" placeholder={formatValue(DEPOSIT)} value={deposit} onChange={handleUpdateDeposit} />
+              Deposit
+              <input type="text" className="grow" value={deposit} onChange={handleUpdateDeposit} />
             </label>
           </div>
           <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <button className="btn btn-success" onClick={handleAddTransaction}>
+            <button className="btn btn-success" onClick={actionAddTransaction}>
               Add Transaction
             </button>
           </div>
 
+          <div className="divider">Quotes</div>
           <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
             <label className="input input-bordered flex items-center gap-2 w-48">
               Symbol
-              <input type="text" className="grow" placeholder={SYMBOL} value={symbol} onChange={handleUpdateSymbol} />
+              <input type="text" className="grow" value={symbol} onChange={handleUpdateSymbol} />
             </label>
             <label className="input input-bordered flex items-center gap-2 w-48">
-              Direction
-              <input type="text" className="grow" placeholder={DIRECTION} value={direction} onChange={handleUpdateDirection} />
+              Amount
+              <input type="text" className="grow" value={amount} onChange={handleUpdateAmount} />
             </label>
             <label className="input input-bordered flex items-center gap-2 w-48">
               Size
-              <input type="text" className="grow" placeholder={SIZE.toString()} value={size} onChange={handleUpdateSize} />
+              <input type="text" className="grow" value={size} onChange={handleUpdateSize} />
+            </label>
+          </div>
+
+          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
+            <label className="input  flex items-center gap-2 w-auto">
+              Call
+              <input
+                type="radio"
+                name="radio-trade-direction"
+                value={TradeDirection.Call}
+                className="radio"
+                checked={tradeDirection === TradeDirection.Call}
+                onChange={handleUpdateTradeDirection}
+              />
+            </label>
+            <label className="input  flex items-center gap-2 w-auto">
+              Put
+              <input
+                type="radio"
+                name="radio-trade-direction"
+                value={TradeDirection.Put}
+                className="radio"
+                checked={tradeDirection === TradeDirection.Put}
+                onChange={handleUpdateTradeDirection}
+              />
+            </label>
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              Take
+              <input type="text" className="grow" placeholder="$" value={takeProfit} onChange={handleUpdateTakeProfit} />
+            </label>
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              Stop
+              <input type="text" className="grow" placeholder="$" value={stopLoss} onChange={handleUpdateStopLoss} />
+            </label>
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              TradExp
+              <input type="text" className="grow" placeholder="yyyy-mm-dd" value={formatTimestamp(contractExpiry) as any} />
+            </label>
+          </div>
+
+          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
+            <label className="input  flex items-center gap-2 w-auto">
+              Buy
+              <input
+                type="radio"
+                name="radio-option-direction"
+                value={OptionDirection.Buy}
+                className="radio"
+                checked={optionDirection === OptionDirection.Buy}
+                onChange={handleUpdateOptionDirection}
+              />
+            </label>
+            <label className="input  flex items-center gap-2 w-auto">
+              Sell
+              <input
+                type="radio"
+                name="radio-option-direction"
+                value={OptionDirection.Sell}
+                className="radio"
+                checked={optionDirection === OptionDirection.Sell}
+                onChange={handleUpdateOptionDirection}
+              />
+            </label>
+            <label className="input  flex items-center gap-2 w-auto">
+              Call
+              <input
+                type="radio"
+                name="radio-option-choice"
+                value={OptionChoice.Call}
+                className="radio"
+                checked={optionChoice === OptionChoice.Call}
+                onChange={handleUpdateOptionChoice}
+              />
+            </label>
+            <label className="input  flex items-center gap-2 w-auto">
+              Put
+              <input
+                type="radio"
+                name="radio-option-choice"
+                value={OptionChoice.Put}
+                className="radio"
+                checked={optionChoice === OptionChoice.Put}
+                onChange={handleUpdateOptionChoice}
+              />
+            </label>
+            <label className="input  flex items-center gap-2 w-auto">
+              American
+              <input
+                type="radio"
+                name="radio-option-type"
+                value={OptionType.American}
+                className="radio"
+                checked={optionType === OptionType.American}
+                onChange={handleUpdateOptionType}
+              />
+            </label>
+            <label className="input  flex items-center gap-2 w-auto">
+              European
+              <input
+                type="radio"
+                name="radio-option-type"
+                value={OptionType.European}
+                className="radio"
+                checked={optionType === OptionType.European}
+                onChange={handleUpdateOptionType}
+              />
             </label>
           </div>
           <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <button className="btn btn-success btn-outline" onClick={handleOpenContract}>
-              Open Contract
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              OptExp
+              <input type="text" className="grow" placeholder="yyyy-mm-dd" />
+            </label>
+          </div>
+          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              Primary
+              <input type="text" className="grow" placeholder="+/- pt" />
+            </label>
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              Secondary
+              <input type="text" className="grow" placeholder="+/- pt" />
+            </label>
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              Tertiary
+              <input type="text" className="grow" placeholder="+/- pt" />
+            </label>
+            <label className="input input-bordered flex items-center gap-2 w-48">
+              Quaternary
+              <input type="text" className="grow" placeholder="+/- pt" />
+            </label>
+          </div>
+
+          <div className="divider"></div>
+          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
+            <button className="btn btn-warning w-32" onClick={actionOpenContract}>
+              Open <br />
+              Contract
+            </button>
+            <input type="text" className="w-32 input input-bordered " placeholder="Contract ID" defaultValue={contractId ?? ""} />
+            <button className="btn btn-warning w-32" onClick={actionCloseContract}>
+              Close <br />
+              Contract
             </button>
           </div>
 
           <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Symbol
-              <input type="text" className="grow" placeholder={SYMBOL} value={symbol} onChange={handleUpdateSymbol} />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Notional
-              <input type="text" className="grow" placeholder="$1000" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Take
-              <input type="text" className="grow" placeholder="$50" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Stop
-              <input type="text" className="grow" placeholder="$100" />
-            </label>
+            <button className="btn btn-success w-32" onClick={actionDiscoverOpeningRate}>
+              Discover <br />
+              Rate
+            </button>
+            <input type="text" className="w-32 input input-bordered " placeholder="Opening Rate" defaultValue={openingRate ?? ""} />
+            <button className="btn btn-warning  w-32" onClick={actionOpenTrade}>
+              Open <br />
+              Trade
+            </button>
+            <input type="text" className="w-32 input input-bordered " placeholder="Trade ID" defaultValue={tradeId ?? ""} />
+
+            <button className="btn btn-success w-32" onClick={actionDiscoverClosingRate}>
+              Discover <br />
+              Rate
+            </button>
+            <input type="text" className="w-32 input input-bordered " placeholder="Closing Rate" defaultValue={closingRate ?? ""} />
+            <button className="btn btn-warning  w-32" onClick={actionCloseTrade}>
+              Close <br />
+              Trade
+            </button>
           </div>
 
           <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <button className="btn btn-success btn-outline">Open Trade</button>
-          </div>
-          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Symbol
-              <input type="text" className="grow" placeholder={SYMBOL} value={symbol} onChange={handleUpdateSymbol} />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Notional
-              <input type="text" className="grow" placeholder="$1000" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Take
-              <input type="text" className="grow" placeholder="$50" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Stop
-              <input type="text" className="grow" placeholder="$100" />
-            </label>
-            <input type="checkbox" className="checkbox" />
-            <label className="input input-bordered flex items-center gap-2 w-48">
+            <button className="btn btn-success btn-outline w-32" onClick={actionDiscoverPrimaryPrice}>
+              Discover <br />
+              Price
+            </button>
+            <input type="text" className="w-32 input input-bordered " placeholder="Option Price" defaultValue={primaryPrice ?? ""} />
+            <button className="btn btn-warning btn-outline w-32" onClick={actionOpenPrimaryOption}>
+              Open <br />
               Option
-              <input type="text" className="grow" placeholder="25 +/- pt" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Expiry
-              <input type="text" className="grow" placeholder="AME" />
-            </label>
-          </div>
-
-          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <button className="btn btn-success btn-outline">Trade Quote</button>
-          </div>
-
-          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Symbol
-              <input type="text" className="grow" placeholder={SYMBOL} value={symbol} onChange={handleUpdateSymbol} />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Notional
-              <input type="text" className="grow" placeholder="$1000" />
-            </label>
-            <label className="input  flex items-center gap-2 w-auto">
-              Vanilla
-              <input type="radio" name="radio-1" className="radio" defaultChecked />
-            </label>
-            <label className="input  flex items-center gap-2 w-auto">
-              Risk Reversal
-              <input type="radio" name="radio-1" className="radio" defaultChecked />
-            </label>
-            <label className="input  flex items-center gap-2 w-auto">
-              Butterfly
-              <input type="radio" name="radio-1" className="radio" defaultChecked />
-            </label>
-            <label className="input  flex items-center gap-2 w-auto">
-              Condor
-              <input type="radio" name="radio-1" className="radio" defaultChecked />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              1
-              <input type="text" className="grow" placeholder="25 +/- pt" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              2
-              <input type="text" className="grow" placeholder="5 +/- pt" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              3
-              <input type="text" className="grow" placeholder="5 +/- pt" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              4
-              <input type="text" className="grow" placeholder="25 +/- pt" />
-            </label>
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              Expiry
-              <input type="text" className="grow" placeholder="AME" />
-            </label>
-          </div>
-
-          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <button className="btn btn-success btn-outline">Option Quote</button>
-          </div>
-
-          <div className="m-4 flex flex-row flex-wrap gap-4">
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              ID
-              <input type="text" className="grow" placeholder="..." />
-            </label>
-          </div>
-
-          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <button className="btn btn-warning btn-outline">Accept Quote</button>
-          </div>
-          <div className="m-4 flex flex-row flex-wrap gap-4">
-            <label className="input input-bordered flex items-center gap-2 w-48">
-              REF
-              <input type="text" className="grow" placeholder="..." />
-            </label>
-          </div>
-
-          <div className="m-4 flex flex-row flex-wrap gap-4 items-center">
-            <button className="btn btn-warning btn-outline">Close Trade</button>
+            </button>
+            <input type="text" className="w-32 input input-bordered " placeholder="Option ID" defaultValue={primaryId ?? ""} />
+            <button className="btn btn-warning btn-outline w-32" onClick={actionExecutePrimaryOption}>
+              Exercise <br />
+              Option
+            </button>
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { TradeStatus } from "../enums/TradeStatus"
 export default function useBalance(): Record<string, number> | undefined {
   const balances = useLiveQuery(async () => {
     const transactions = await db.transactions?.toArray()
-    const margins = await db.margins?.where({ status: TradeStatus.OPEN }).toArray()
+    const margins = await db.margins?.where({ status: TradeStatus.Open }).toArray()
 
     const transactionBalance = transactions.reduce((acc, transaction) => {
       return acc + transaction.value

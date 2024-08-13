@@ -5,20 +5,20 @@ import { ScenarioSpeed } from "@/data/indexDB/enums/ScenarioSpeed"
 import { DEFAULT_START } from "@/data/indexDB/constants/DEFAULT_START"
 import { ONE_DAY } from "@/data/indexDB/constants/ONE_DAY"
 
-import updateTimer from "@/data/indexDB/controllers/update/updateTimer"
+import updateTimer from "@/data/indexDB/controllers/updateTimer"
 
 import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 
-import getTimer from "../get/getTimer"
-import getMarkets from "../get/getMarkets"
-import updatePrice from "../update/updatePrice"
+import getTimer from "./getTimer"
+
+import recalculatePrices from "./recalculatePrices"
+import recalculateMargins from "./recalculateMargins"
 // import updateStatus from "../update/updateStatus"
 
 export async function controller(db: PriceSimulatorDexie, takeControl: boolean) {
   const timer = await getTimer()
-  const markets = await getMarkets()
 
-  db.transaction("rw", ["timer", "data", "markets", "prices", "trades", "margins", "statuses"], async () => {
+  db.transaction("rw", ["timer", "data", "markets", "prices", "trades", "margins", "statuses", "transactions"], async () => {
     const currentDay = timer?.currentDay
 
     const isOwner = takeControl === true ? true : timer?.id === db.id
@@ -40,9 +40,9 @@ export async function controller(db: PriceSimulatorDexie, takeControl: boolean) 
         await updateTimer({ currentDay: newDay, currentTimestamp: newTimestamp })
       }
 
-      for await (const market of markets) {
-        await updatePrice(market.symbol, newTimestamp)
-      }
+      await recalculatePrices()
+
+      await recalculateMargins()
     }
   })
     .then(async () => {
@@ -51,7 +51,7 @@ export async function controller(db: PriceSimulatorDexie, takeControl: boolean) 
       if (isTimerActive === true) {
         db.timeout = window.setTimeout(() => {
           controller(db, takeControl)
-        }, speed ?? ScenarioSpeed.slow)
+        }, speed ?? ScenarioSpeed.Slow)
       }
     })
     .catch((err) => {

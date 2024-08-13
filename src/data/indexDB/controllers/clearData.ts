@@ -19,6 +19,9 @@ export async function controller(db: PriceSimulatorDexie) {
   await db.margins.clear()
 
   await db.transactions.clear()
+
+  db.dataCache = {}
+  db.pricesCache = {}
 }
 
 export default function clearData() {
