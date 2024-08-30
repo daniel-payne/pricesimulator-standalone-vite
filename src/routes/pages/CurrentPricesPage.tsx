@@ -45,8 +45,8 @@ export const PriceDisplay = ({ price, showJson = false }: { price?: Price; showJ
       <div className="w-full h-full border border-primary rounded-xl p-2 overflow-hidden">
         <div className="text-primary text-xl font-bold">{price.symbol}</div>
         {showJson && <pre>{JSON.stringify(price, null, 2)}</pre>}
-        {/* <div className="text-secondary font-bold">{price?.name}&nbsp;</div>
-        <div className="text-secondary">{price?.description}&nbsp;</div>
+        <div className="text-secondary font-bold">{price?.currentOpen ?? price?.priorClose} </div>
+        {/* <div className="text-secondary">{price?.description}&nbsp;</div>
         <div className="text-secondary font-bold">
           {market?.contractSize} {market?.contractUnit}&nbsp;
         </div>

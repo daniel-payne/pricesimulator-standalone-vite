@@ -1,8 +1,11 @@
 export type Transaction = {
-  id: string
-  timestamp: number
+  reference: string
+  index: number
 
   value: number
+  source: string
+
+  description?: string
 
   [index: string]: any
 }

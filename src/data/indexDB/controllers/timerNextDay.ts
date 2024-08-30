@@ -6,8 +6,8 @@ import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 
 import getTimer from "./getTimer"
 import updateTimer from "./updateTimer"
-import recalculateCurrentPrices from "./recalculateCurrentPrices"
-import recalculateCurrentRates from "./recalculateCurrentRates"
+
+import recalculateAll from "./recalculateAll"
 
 // import recalculatePrices from "./recalculatePrices"
 // import recalculateMargins from "./recalculateMargins"
@@ -18,23 +18,33 @@ export async function controller(db: PriceSimulatorDexie, takeControl: boolean) 
   db.transaction(
     "rw",
     [
-      "timer",
-      "markets",
       "currencies",
-      "marketOpens",
-      "marketHighs",
-      "marketLows",
-      "marketCloses",
       "currencyRates",
-      "priceSummaries",
-      "rateSummaries",
+      "currentBalance",
       "currentPrices",
       "currentRates",
+      "currentMargins",
+      "currentVolatilities",
+      "overnightVolatilities",
+      "parkinsonVolatilities",
+      "rogersSatchellVolatilities",
+      "garminKlassVolatilities",
+      "yangZhangVolatilities",
+      "marketCloses",
+      "marketHighs",
+      "marketLows",
+      "marketOpens",
+      "markets",
+      "priceSummaries",
+      "rateSummaries",
+      "timer",
+      "trades",
+      "transactions",
     ],
     async () => {
       const currentIndex = (currentTimer?.currentIndex ?? 0) + 1
 
-      const isOwner = takeControl === true ? true : currentTimer?.id === db.id
+      const isOwner = takeControl === true ? true : currentTimer?.guid === db.guid
 
       let isTimerActive = takeControl === true ? true : currentTimer?.isTimerActive === true
 
@@ -42,14 +52,12 @@ export async function controller(db: PriceSimulatorDexie, takeControl: boolean) 
         if (takeControl === true) {
           isTimerActive = false
 
-          await updateTimer({ id: db.id, currentIndex, isTimerActive })
+          await updateTimer({ guid: db.guid, currentIndex, isTimerActive })
         } else {
           await updateTimer({ currentIndex: currentIndex })
         }
 
-        await recalculateCurrentPrices()
-        await recalculateCurrentRates()
-        // await recalculateMargins()
+        await recalculateAll()
       }
     }
   )

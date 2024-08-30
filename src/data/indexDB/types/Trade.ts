@@ -10,16 +10,16 @@ export type Trade = {
   size?: number
   amount: number
   direction: TradeDirection
-  expiryTimestamp?: number
+  expiryIndex?: number
 
   entryValue?: number
   entryPrice?: number
   entryCost?: number
-  entryTimestamp?: number
+  entryIndex?: number
 
   exitPrice?: number
   exitCost?: number
-  exitTimestamp?: number
+  exitIndex?: number
 
   exitDifference?: number
   exitPercent?: number

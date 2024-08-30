@@ -17,7 +17,7 @@ export default async function calculateOption(
     timeToMaturity: range / 365,
     volatility: volatility,
     riskFreeRate: interestRate / 100,
-    dividendYield: 0.0,
+    dividendYield: 0,
   })
 
   const callOption = new Option({
@@ -28,7 +28,7 @@ export default async function calculateOption(
     timeToMaturity: range / 365,
     volatility: volatility,
     riskFreeRate: interestRate / 100,
-    dividendYield: 0.0,
+    dividendYield: 0,
   })
 
   let result = {}
@@ -45,33 +45,42 @@ export default async function calculateOption(
   } else if (type.toUpperCase() === "AMERICAN") {
     result = {
       call: {
-        price: callOption.price("binomial-tree", { timeSteps: 100 }),
+        price: callOption.price("monte-carlo-simulation", { simulations: 1000 }),
       },
       put: {
-        price: putOption.price("binomial-tree", { timeSteps: 100 }),
+        price: putOption.price("monte-carlo-simulation", { simulations: 1000 }),
       },
     }
-  } else {
-    result = {
-      call: {
-        price: callOption.price("monte-carlo-simulation", {
-          simulations: 1000,
-          timeSteps: 50,
-          prngName: "sfc32",
-          prngSeed: "123",
-          prngAdvancePast: 15,
-        }),
-      },
-      put: {
-        price: putOption.price("monte-carlo-simulation", {
-          simulations: 1000,
-          timeSteps: 50,
-          prngName: "sfc32",
-          prngSeed: "123",
-          prngAdvancePast: 15,
-        }),
-      },
-    }
+
+    // result = {
+    //   call: {
+    //     price: callOption.price("binomial-tree", { timeSteps: 100 }),
+    //   },
+    //   put: {
+    //     price: putOption.price("binomial-tree", { timeSteps: 100 }),
+    //   },
+    // }
+
+    //   result = {
+    //     call: {
+    //       price: callOption.price("monte-carlo-simulation", {
+    //         simulations: 1000,
+    //         timeSteps: 50,
+    //         prngName: "sfc32",
+    //         prngSeed: "123",
+    //         prngAdvancePast: 15,
+    //       }),
+    //     },
+    //     put: {
+    //       price: putOption.price("monte-carlo-simulation", {
+    //         simulations: 1000,
+    //         timeSteps: 50,
+    //         prngName: "sfc32",
+    //         prngSeed: "123",
+    //         prngAdvancePast: 15,
+    //       }),
+    //     },
+    //   }
   }
 
   return result

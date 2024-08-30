@@ -7,14 +7,14 @@ import type { Timer } from "../types/Timer"
 
 import { DEFAULT_START } from "../constants/DEFAULT_START"
 
-export async function controller(db: PriceSimulatorDexie, newValues: Timer = {}) {
-  const id = db.id
+export async function controller(db: PriceSimulatorDexie, newValues: Partial<Timer> = {}) {
+  const guid = db.guid
 
   const collection = await db.timer.limit(1)
   const currentTimer = await collection.first()
 
   const defaultTimer = {
-    id,
+    guid,
     speed: ScenarioSpeed.Slow,
     startDay: DEFAULT_START,
     currentDay: DEFAULT_START,
@@ -25,15 +25,15 @@ export async function controller(db: PriceSimulatorDexie, newValues: Timer = {})
   let updatedTimer: Timer | undefined
 
   if (currentTimer == null) {
-    updatedTimer = { ...defaultTimer, ...newValues, id }
+    updatedTimer = { ...defaultTimer, ...newValues, guid }
 
     await db.timer.add(updatedTimer)
   } else {
-    updatedTimer = { ...currentTimer, ...newValues, id }
+    updatedTimer = { ...currentTimer, ...newValues, guid }
     await collection.modify(updatedTimer)
   }
 }
 
-export default async function updateTimer(newValues: Timer = {}) {
+export default async function updateTimer(newValues: Partial<Timer> = {}) {
   return await controller(db, newValues)
 }

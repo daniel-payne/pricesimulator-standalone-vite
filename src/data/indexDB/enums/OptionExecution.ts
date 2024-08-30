@@ -1,4 +1,4 @@
-export enum OptionType {
+export enum OptionExecution {
   American = "AMERICAN",
   European = "EUROPEAN",
 }

@@ -1,7 +1,7 @@
 import { ScenarioSpeed } from "../enums/ScenarioSpeed"
 
 export type Timer = {
-  id?: string
+  guid: string
 
   speed?: ScenarioSpeed
 

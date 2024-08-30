@@ -1,7 +1,7 @@
 import type { Rate } from "../types/Rate"
 import type { RateSummary } from "../types/RateSummary"
 
-export default function calculatePriceForSymbolAndIndex(
+export default function extractRateForIndex(
   currentIndex: number,
 
   rates: Array<number>,

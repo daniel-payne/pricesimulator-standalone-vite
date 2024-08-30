@@ -2,6 +2,8 @@ import db from "@/data/indexDB/db"
 
 import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 import timerReset from "./timerReset"
+import recalculateAll from "./recalculateAll"
+import addTransaction from "./addTransaction"
 
 export async function controller(db: PriceSimulatorDexie) {
   // await db.timer.clear()
@@ -50,13 +52,17 @@ export async function controller(db: PriceSimulatorDexie) {
   // await db.rateSummaries.clear()
 
   await db.currentBalance.clear()
-  await db.currentPrices.clear()
-  await db.currentRates.clear()
+  // await db.currentPrices.clear()
+  // await db.currentRates.clear()
   await db.currentMargins.clear()
 
   await timerReset()
   // await recalculatePrices()
   // await recalculateMargins()
+
+  await addTransaction(5000, "USER")
+
+  await recalculateAll()
 
   return
 }

@@ -7,19 +7,19 @@ import { DEFAULT_START } from "@/data/indexDB/constants/DEFAULT_START"
 import { Timer } from "../types/Timer"
 
 export async function controller(db: PriceSimulatorDexie) {
-  const id = db.id
+  const guid = db.guid
 
   let timer = await db.timer.limit(1).first()
 
   if (timer == null) {
     const defaultTimer = {
-      id,
+      guid,
       speed: ScenarioSpeed.Slow,
       currentIndex: DEFAULT_START,
       isTimerActive: false,
     }
 
-    timer = { ...defaultTimer, id } as Timer
+    timer = { ...defaultTimer, guid } as Timer
 
     await db.timer.put(timer)
   }

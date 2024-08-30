@@ -7,7 +7,7 @@ import { Price } from "../types/Price"
 
 import type { PriceSummary } from "../types/PriceSummary"
 
-export default function calculatePriceForSymbolAndIndex(
+export default function extractPriceForIndex(
   currentIndex: number,
 
   opens: Array<number>,

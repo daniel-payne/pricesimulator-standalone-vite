@@ -25,13 +25,14 @@ import type { RateSummary } from "@/data/indexDB/types/RateSummary"
 import type { SymbolData } from "@/data/indexDB/types/SymbolData"
 import type { RangeData } from "@/data/indexDB/types/RangeData"
 import type { KeyData } from "@/data/indexDB/types/KeyData"
+import { Volatility } from "./types/Volatility"
 
 export const DIXIE_BALANCE_KEY = "DIXIE_BALANCE_KEY"
 
 export class PriceSimulatorDexie extends Dexie {
   timeout: number | null = null
 
-  id: string
+  guid: string
 
   timer!: Table<Timer>
 
@@ -80,14 +81,15 @@ export class PriceSimulatorDexie extends Dexie {
 
   currentBalance!: Table<Balance>
   currentPrices!: Table<Price>
+  currentVolatilities!: Table<Volatility>
   currentRates!: Table<Rate>
   currentMargins!: Table<Margin>
 
   constructor() {
     super("PriceSimulator")
 
-    this.version(2).stores({
-      timer: "id",
+    this.version(7).stores({
+      timer: "guid",
 
       scenarios: "code, name",
       markets: "symbol, name",
@@ -132,13 +134,14 @@ export class PriceSimulatorDexie extends Dexie {
       priceSummaries: "symbol",
       rateSummaries: "key",
 
-      currentBalance: "id",
+      currentBalance: "guid",
       currentPrices: "symbol",
+      currentVolatilities: "symbol",
       currentRates: "key",
-      currentMargins: "id",
+      currentMargins: "id, status",
     })
 
-    this.id = generateID()
+    this.guid = generateID()
   }
 }
 
@@ -149,7 +152,7 @@ const db = new PriceSimulatorDexie()
 db.on("ready", function () {
   loadApplication(db)
   // window.addEventListener("onbeforeunload", async () => {
-  //   const id = db.id
+  //   const id = db.guid
   //   const collection = await db.status.limit(1)
   //   const currentStatus = await collection.first()
   //   const newStatus = { isTimerActive: false }

@@ -1,29 +1,41 @@
 import db from "@/data/indexDB/db"
 
-import type { PriceSimulatorDexie } from "@/data/indexDB/db"
-import loadMarkets from "./loadMarkets"
-import loadScenarios from "./loadScenarios"
+import { controller as loadMarkets } from "./loadMarkets"
+import { controller as loadScenarios } from "./loadScenarios"
+import { controller as loadCurrencies } from "./loadCurrencies"
 import { controller as loadDataForSymbol } from "./loadDataForSymbol"
+import { controller as loadRateForKey } from "./loadRateForKey"
+import { controller as addTransaction } from "./addTransaction"
+import { controller as recalculateAll } from "./recalculateAll"
+
+import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 
 export async function controller(db: PriceSimulatorDexie) {
   const marketCount = await db.markets.count()
   const scenariosCount = await db.scenarios.count()
+  const currencyCount = await db.currencies.count()
+  const transactionCount = await db.transactions.count()
 
-  if (scenariosCount === 10) {
-    await loadScenarios()
+  if (scenariosCount < 1) {
+    await loadScenarios(db)
   }
 
-  if (marketCount === 10) {
-    await loadMarkets()
+  if (marketCount < 1) {
+    await loadMarkets(db)
   }
 
-  // const markets = await db.markets.toArray()
+  if (currencyCount < 1) {
+    await loadCurrencies(db)
+  }
 
-  // for await (const market of markets) {
-  //   await loadDataForSymbol(db, market.symbol, market.path)
-  // }
+  if (transactionCount < 1) {
+    await addTransaction(db, 5000, "USER")
+  }
 
-  loadDataForSymbol(db, "KC.F")
+  await loadDataForSymbol(db, "LC.F")
+  await loadRateForKey(db, "USD")
+
+  await recalculateAll(db)
 
   return
 }

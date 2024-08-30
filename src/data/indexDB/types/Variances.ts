@@ -16,4 +16,6 @@ export type Variances = {
 
   garminKlassValues: number[]
   rogersSatchellValues: number[]
+
+  [index: string]: any
 }

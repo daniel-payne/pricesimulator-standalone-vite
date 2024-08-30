@@ -1,4 +1,6 @@
 export enum OptionDirection {
-  Buy = "BUY",
-  Sell = "SELL",
+  BuyCall = "BUYCALL",
+  SellCall = "SELLCALL",
+  BuyPut = "BUYPUT",
+  SellPut = "SELLPUT",
 }

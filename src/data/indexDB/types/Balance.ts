@@ -1,7 +1,10 @@
 export type Balance = {
-  id: string
-  timestamp: number
-  value: number
+  guid: string
+
+  currentIndex: number
+  transactionBalance: number
+  marginBalance: number
+  availableBalance: number
 
   [index: string]: any
 }

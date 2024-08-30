@@ -4,4 +4,6 @@ export type Volatilities = {
   rogersSatchellVolatilities: number[]
   garminKlassVolatilities: number[]
   yangZhangVolatilities: number[]
+
+  [index: string]: any
 }
