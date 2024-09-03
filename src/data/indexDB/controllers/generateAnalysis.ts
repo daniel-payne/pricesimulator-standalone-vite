@@ -85,6 +85,10 @@ export async function controller(db: PriceSimulatorDexie, symbol: string, notion
     deltaFactor = 1 / 1000
   } else if (midPrice < 1000) {
     deltaFactor = 1 / 100
+  } else if (midPrice < 10000) {
+    deltaFactor = 1 / 10
+  } else {
+    deltaFactor = 1
   }
 
   analysis.makeCall = { direction: TradeDirection.Call, outcomes: [] }
@@ -252,9 +256,9 @@ export async function controller(db: PriceSimulatorDexie, symbol: string, notion
         outcome.tradeProfit = tradeProfit
         outcome.contractCost = contractCost
 
-        const profit = tradeProfit - contractCost
+        const profit = tradeProfit < 0 ? tradeProfit + contractCost : contractCost
 
-        outcome.profit = profit > contractCost ? contractCost : profit
+        outcome.profit = profit
       })
     }
   })
@@ -328,9 +332,9 @@ export async function controller(db: PriceSimulatorDexie, symbol: string, notion
         outcome.tradeProfit = tradeProfit
         outcome.contractCost = contractCost
 
-        const profit = tradeProfit - contractCost
+        const profit = tradeProfit < 0 ? tradeProfit + contractCost : contractCost
 
-        outcome.profit = profit > contractCost ? contractCost : profit
+        outcome.profit = profit
       })
     }
   })

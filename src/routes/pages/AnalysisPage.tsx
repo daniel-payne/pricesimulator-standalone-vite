@@ -31,6 +31,13 @@ export default function BalancePage({ name = "StatusesBalancePagePage", ...rest 
 
   const [analysis, setAnalysis] = useState<Analysis | undefined>(undefined)
 
+  const [showMakeCall, setShowMakeCall] = useState<boolean | undefined>(undefined)
+  const [showMakePut, setShowMakePut] = useState<boolean | undefined>(undefined)
+  const [showBuyCall, setShowBuyCall] = useState<number | undefined>(undefined)
+  const [showSellCall, setShowSellCall] = useState<number | undefined>(undefined)
+  const [showBuyPut, setShowBuyPut] = useState<number | undefined>(undefined)
+  const [showSellPut, setShowSellPut] = useState<number | undefined>(undefined)
+
   const handleToggleDelta = () => {
     setShowDelta(!showDelta)
   }
@@ -53,6 +60,181 @@ export default function BalancePage({ name = "StatusesBalancePagePage", ...rest 
       const price = await discoverOptionPrice(selectedSymbol, "USD", notional, direction, OptionExecution.European, contractDelta, 30)
 
       alert([price, cost])
+    }
+  }
+
+  const handleUpdateSelection = (selection: string, value: any = undefined) => {
+    // alert(selection)
+
+    if (selection === "showMakeCall") {
+      setShowMakeCall(value)
+    } else if (selection === "showMakePut") {
+      setShowMakePut(value)
+    } else if (selection === "showBuyCall") {
+      setShowBuyCall(value)
+    } else if (selection === "showSellCall") {
+      setShowSellCall(value)
+    } else if (selection === "showBuyPut") {
+      setShowBuyPut(value)
+    } else if (selection === "showSellPut") {
+      setShowSellPut(value)
+    }
+
+    if (selection === "doNothing") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "buySomething") {
+      setShowMakeCall(true)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "sellSomething") {
+      setShowMakeCall(undefined)
+      setShowMakePut(true)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "payBellow") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(25)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "getBellow") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(25)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "payAbove") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(25)
+      setShowSellPut(undefined)
+    } else if (selection === "getAbove") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(25)
+    }
+
+    if (selection === "goLong") {
+      setShowMakeCall(true)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "goShort") {
+      setShowMakeCall(undefined)
+      setShowMakePut(true)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "buyCall") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(25)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "sellCall") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(25)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "proactivePut") {
+      setShowMakeCall(true)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(-25)
+      setShowSellPut(undefined)
+    } else if (selection === "coveredCall") {
+      setShowMakeCall(true)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(25)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "buyPut") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(25)
+      setShowSellPut(undefined)
+    } else if (selection === "proactiveCall") {
+      setShowMakeCall(undefined)
+      setShowMakePut(true)
+      setShowBuyCall(-25)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(undefined)
+    } else if (selection === "coveredPut") {
+      setShowMakeCall(undefined)
+      setShowMakePut(true)
+      setShowBuyCall(undefined)
+      setShowSellCall(undefined)
+      setShowBuyPut(undefined)
+      setShowSellPut(-25)
+    } else if (selection === "riskReversal") {
+      setShowMakeCall(undefined)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(50)
+      setShowBuyPut(undefined)
+      setShowSellPut(25)
+    } else if (selection === "protectiveCollar") {
+      setShowMakeCall(true)
+      setShowMakePut(undefined)
+      setShowBuyCall(undefined)
+      setShowSellCall(50)
+      setShowBuyPut(undefined)
+      setShowSellPut(25)
+    }
+    //else if (selection === "buyPut") {
+    //   setShowMakeCall(undefined)
+    //   setShowMakePut(undefined)
+    //   setShowBuyCall(undefined)
+    //   setShowSellCall(undefined)
+    //   setShowBuyPut(25)
+    //   setShowSellPut(undefined)
+    // } else if (selection === "sellPut") {
+    //   setShowMakeCall(undefined)
+    //   setShowMakePut(undefined)
+    //   setShowBuyCall(undefined)
+    //   setShowSellCall(undefined)
+    //   setShowBuyPut(undefined)
+    //   setShowSellPut(25)
+    // }
+  }
+
+  const handleUpdateDelta = (selection: string) => (delta: number) => {
+    if (selection === "buyCall") {
+      setShowBuyCall(delta)
+    } else if (selection === "sellCall") {
+      setShowSellCall(delta)
+    } else if (selection === "buyPut") {
+      setShowBuyPut(delta)
+    } else if (selection === "sellPut") {
+      setShowSellPut(delta)
     }
   }
 
@@ -106,55 +288,60 @@ export default function BalancePage({ name = "StatusesBalancePagePage", ...rest 
           Show Delta
         </button>
       </div>
-      {/* <div className="divider" />
+      <div className="divider" />
       <div className="flex flex-col gap-2 p-2">
-        <ActionRow1 />
+        <ContractActions
+          showMakeCall={showMakeCall}
+          showMakePut={showMakePut}
+          showBuyCall={showBuyCall}
+          showSellCall={showSellCall}
+          showBuyPut={showBuyPut}
+          showSellPut={showSellPut}
+          onChange={handleUpdateSelection}
+        />
       </div>
       <div className="divider" />
       <div className="flex flex-col gap-2 p-2">
-        <ActionRow2 />
-        <ActionRow3 />
-      </div> */}
+        <UserActions
+          showMakeCall={showMakeCall}
+          showMakePut={showMakePut}
+          showBuyCall={showBuyCall}
+          showSellCall={showSellCall}
+          showBuyPut={showBuyPut}
+          showSellPut={showSellPut}
+          onChange={handleUpdateSelection}
+        />
+        <MarketActions
+          showMakeCall={showMakeCall}
+          showMakePut={showMakePut}
+          showBuyCall={showBuyCall}
+          showSellCall={showSellCall}
+          showBuyPut={showBuyPut}
+          showSellPut={showSellPut}
+          onChange={handleUpdateSelection}
+        />
+      </div>
       <div className="divider" />
       <div className="flex flex-row gap-2 p-2 overflow-auto">
         {/* <ActionColumn /> */}
 
-        <TradeBlock source={analysis?.makeCall} showDelta={showDelta} />
-        <TradeBlock source={analysis?.makePut} showDelta={showDelta} />
+        {showMakeCall != null && <TradeBlock source={analysis?.makeCall} showDelta={showDelta} />}
+        {showMakePut != null && <TradeBlock source={analysis?.makePut} showDelta={showDelta} />}
 
-        <OptionBlock source={analysis?.buyCall} showDelta={showDelta} onClick={handleOnClickCost} />
-        <OptionBlock source={analysis?.sellCall} showDelta={showDelta} onClick={handleOnClickCost} />
-        <OptionBlock source={analysis?.buyPut} showDelta={showDelta} onClick={handleOnClickCost} />
-        <OptionBlock source={analysis?.sellPut} showDelta={showDelta} onClick={handleOnClickCost} />
+        {showBuyCall != null && (
+          <OptionBlock source={analysis?.buyCall} showDelta={showDelta} selectedDelta={showBuyCall} onUpdateDelta={handleUpdateDelta("buyCall")} />
+        )}
+        {showSellCall != null && (
+          <OptionBlock source={analysis?.sellCall} showDelta={showDelta} selectedDelta={showSellCall} onUpdateDelta={handleUpdateDelta("sellCall")} />
+        )}
+        {showBuyPut != null && (
+          <OptionBlock source={analysis?.buyPut} showDelta={showDelta} selectedDelta={showBuyPut} onUpdateDelta={handleUpdateDelta("buyPut")} />
+        )}
+        {showSellPut != null && (
+          <OptionBlock source={analysis?.sellPut} showDelta={showDelta} selectedDelta={showSellPut} onUpdateDelta={handleUpdateDelta("sellPut")} />
+        )}
       </div>
       <div className="flex-auto overflow-auto">{/* <pre>{JSON.stringify(analysis?.buyCall.contracts[3], null, 2)}</pre> */}</div>
-      {/* <div className="flex flex-row gap-2 p-2">
-        <button className="btn btn-primary w-80 h-16 leading-6">Do Nothing</button>
-        <button className="btn btn-primary w-80 h-16 leading-6">Buy Something, then sell it back</button>
-        <button className="btn btn-primary w-80 h-16 leading-6">Sell Something, then buy it back</button>
-        <button className="btn btn-primary w-80 h-16 leading-6">Pay Some Money to have the chance to buy below market price</button>
-        <button className="btn btn-primary w-80 h-16 leading-6">Get Some Money, and have the risk you have to sell below market price</button>
-        <button className="btn btn-primary w-80 h-16 leading-6">Sell a risk to offset the cost to have the chance to buy below market price</button>
-        <button className="btn btn-primary w-80 h-16 leading-6">Sell a risk to offset the cost to have the chance to sell above market price</button>
-      </div> */}
-      {/* <div className="flex flex-row gap-2 p-2">
-        <button className="btn btn-primary w-32 h-6 leading-6">Go Long</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Go Short</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Covered Call</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Covered Short</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Buy a call</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Sell a call</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Buy a Put</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Sell a Put</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Risk Reversal</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Straddle</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Strangle</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Butterfly</button>
-        <button className="btn btn-primary w-32 h-6 leading-6">Iron Condor</button>
-        <button className="btn btn-primary w-32 h-6 leading-6" disabled>
-          Long Call Butterfly
-        </button>
-      </div> */}
     </div>
   )
 }
@@ -265,97 +452,283 @@ const SellPutIcons = () => {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const ActionColumn = () => {
+// const ActionColumn = () => {
+//   return (
+//     <div className="flex flex-col items-center gap-4 p-2">
+//       <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
+//         <div className="text-secondary font-extrabold">Make Call</div>
+//         <MakeCallIcons />
+//       </div>
+
+//       <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
+//         <div className="text-secondary font-extrabold">Make Put</div>
+//         <MakePutIcons />
+//       </div>
+
+//       <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
+//         <div className="text-secondary font-extrabold">Buy Call</div>
+//         <BuyCallIcons />
+//       </div>
+
+//       <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
+//         <div className="text-secondary font-extrabold">Sell Call</div>
+//         <SellCallIcons />
+//       </div>
+
+//       <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
+//         <div className="text-secondary font-extrabold">Buy Put</div>
+//         <BuyPutIcons />
+//       </div>
+
+//       <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
+//         <div className="text-secondary font-extrabold">Sell Put</div>
+//         <SellPutIcons />
+//       </div>
+//     </div>
+//   )
+// }
+
+const ContractActions = ({ showMakeCall, showMakePut, showBuyCall, showSellCall, showBuyPut, showSellPut, onChange }: any) => {
+  // const selectedClassName = "btn btn-info h-24 w-40 flex flex-col rounded-tr-none"
+  // const unselectedClassName = "btn btn-info btn-outline h-24 w-40 flex flex-col rounded-br-none"
+  const baseClassName = "btn btn-primary h-16 w-80 flex flex-row rounded-b-none"
+
+  const selectedClassName = baseClassName
+  const unselectedClassName = baseClassName + " btn-outline"
+
+  const makeCallClassName = showMakeCall != null ? selectedClassName : unselectedClassName
+  const makePutClassName = showMakePut != null ? selectedClassName : unselectedClassName
+  const buyCallClassName = showBuyCall != null ? selectedClassName : unselectedClassName
+  const sellCallClassName = showSellCall != null ? selectedClassName : unselectedClassName
+  const buyPutClassName = showBuyPut != null ? selectedClassName : unselectedClassName
+  const sellPutClassName = showSellPut != null ? selectedClassName : unselectedClassName
+
+  const handleUpdateSelection = (selection: string) => () => {
+    if (selection === "showMakeCall") {
+      onChange(selection, showMakeCall === true ? undefined : true)
+    } else if (selection === "showMakePut") {
+      onChange(selection, showMakePut === true ? undefined : true)
+    } else if (selection === "showBuyCall") {
+      onChange(selection, showBuyCall === true ? undefined : true)
+    } else if (selection === "showSellCall") {
+      onChange(selection, showSellCall === true ? undefined : true)
+    } else if (selection === "showBuyPut") {
+      onChange(selection, showBuyPut === true ? undefined : true)
+    } else if (selection === "showSellPut") {
+      onChange(selection, showSellPut === true ? undefined : true)
+    }
+  }
+
   return (
-    <div className="flex flex-col items-center gap-4 p-2">
-      <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
-        <div className="text-secondary font-extrabold">Make Call</div>
+    <div className="flex flex-row gap-2  items-center">
+      <button className={makeCallClassName} onClick={handleUpdateSelection("showMakeCall")}>
+        <div>
+          Make Call <span className="opacity-50">Trade</span>
+        </div>
         <MakeCallIcons />
-      </div>
-
-      <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
-        <div className="text-secondary font-extrabold">Make Put</div>
+      </button>
+      <button className={makePutClassName} onClick={handleUpdateSelection("showMakePut")}>
+        <div>
+          Make Put <span className="opacity-50">Trade</span>
+        </div>
         <MakePutIcons />
-      </div>
-
-      <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
-        <div className="text-secondary font-extrabold">Buy Call</div>
+      </button>
+      <button className={buyCallClassName} onClick={handleUpdateSelection("showBuyCall")}>
+        <div>
+          Buy Call <span className="opacity-50">Option</span>
+        </div>
         <BuyCallIcons />
-      </div>
-
-      <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
-        <div className="text-secondary font-extrabold">Sell Call</div>
+      </button>
+      <button className={sellCallClassName} onClick={handleUpdateSelection("showSellCall")}>
+        <div>
+          Sell Call <span className="opacity-50">Option</span>
+        </div>
         <SellCallIcons />
-      </div>
-
-      <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
-        <div className="text-secondary font-extrabold">Buy Put</div>
+      </button>
+      <button className={buyPutClassName} onClick={handleUpdateSelection("showBuyPut")}>
+        <div>
+          Buy Put <span className="opacity-50">Option</span>
+        </div>
         <BuyPutIcons />
-      </div>
-
-      <div className="w-32 border-primary border-2 rounded-xl flex flex-col items-center gap-2 p-2">
-        <div className="text-secondary font-extrabold">Sell Put</div>
+      </button>
+      <button className={sellPutClassName} onClick={handleUpdateSelection("showSellPut")}>
+        <div>
+          Sell Put <span className="opacity-50">Option</span>
+        </div>
         <SellPutIcons />
-      </div>
-    </div>
-  )
-}
-
-const ActionRow1 = () => {
-  return (
-    <div className="flex flex-row gap-2  items-center">
-      <button className="btn btn-info h-24 w-40 flex flex-col rounded-tr-none">
-        <div>Make Call</div> <MakeCallIcons />
-      </button>
-      <button className="btn btn-info btn-outline h-24 w-40 flex flex-col rounded-br-none">
-        <div>Make Put</div> <MakePutIcons />
-      </button>
-      <button className="btn btn-info btn-outline h-24 w-40 flex flex-col rounded-tr-none">
-        <div>Buy Call</div> <BuyCallIcons />
-      </button>
-      <button className="btn btn-info btn-outline h-24 w-40 flex flex-col rounded-br-none">
-        <div>Sell Call</div> <SellCallIcons />
-      </button>
-      <button className="btn btn-info btn-outline h-24 w-40 flex flex-col rounded-br-none">
-        <div>Buy Put</div> <BuyPutIcons />
-      </button>
-      <button className="btn btn-info btn-outline h-24 w-40 flex flex-col rounded-tr-none">
-        <div>Sell Put</div> <SellPutIcons />
       </button>
     </div>
   )
 }
 
-const ActionRow2 = () => {
+const UserActions = ({ showMakeCall, showMakePut, showBuyCall, showSellCall, showBuyPut, showSellPut, onChange }: any) => {
+  const selectedClassName = "btn btn-primary w-80 h-16 leading-6"
+  const unselectedClassName = "btn btn-primary btn-outline w-80 h-16 leading-6"
+
+  const handleUpdateSelection = (selection: string) => () => {
+    onChange(selection)
+  }
+
+  const doNothingClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall == null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const sellSomethingClassName =
+    showMakeCall != null && showMakePut == null && showBuyCall == null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const buySomethingClassName =
+    showMakeCall == null && showMakePut != null && showBuyCall == null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const payBelowClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall != null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const getBelowClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall == null && showSellCall != null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const payAboveClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall == null && showSellCall == null && showBuyPut != null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const getAboveClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall == null && showSellCall == null && showBuyPut == null && showSellPut != null
+      ? selectedClassName
+      : unselectedClassName
+
   return (
     <div className="flex flex-row gap-2  items-center">
-      <button className="btn btn-primary btn-outline w-80 h-16 leading-6">Do Nothing</button>
-      <button className="btn btn-primary w-80 h-16 leading-6">Buy Something, then sell it back</button>
-      <button className="btn btn-primary btn-outline w-80 h-16 leading-6">Sell Something, then buy it back</button>
-      <button className="btn btn-primary btn-outline w-80 h-16 leading-6">Pay Some Money to have the chance to buy below market price</button>
-      <button className="btn btn-primary btn-outline w-80 h-16 leading-6">Get Some Money, and have the risk you have to sell below market price</button>
-      <button className="btn btn-primary btn-outline w-80 h-16 leading-6">Sell a risk to offset the cost to have the chance to buy below market price</button>
-      <button className="btn btn-primary btn-outline w-80 h-16 leading-6">Sell a risk to offset the cost to have the chance to sell above market price</button>
+      <button className={doNothingClassName} onClick={handleUpdateSelection("doNothing")}>
+        Do Nothing
+      </button>
+      <button className={sellSomethingClassName} onClick={handleUpdateSelection("buySomething")}>
+        Buy Something, then sell it back
+      </button>
+      <button className={buySomethingClassName} onClick={handleUpdateSelection("sellSomething")}>
+        Sell Something, then buy it back
+      </button>
+      <button className={payBelowClassName} onClick={handleUpdateSelection("payBellow")}>
+        Pay Some Money to have the chance to buy below market price
+      </button>
+      <button className={getBelowClassName} onClick={handleUpdateSelection("getBellow")}>
+        Get Some Money, and have the risk you have to sell below market price
+      </button>
+      <button className={payAboveClassName} onClick={handleUpdateSelection("payAbove")}>
+        Pay Some Money to have the chance to sell above market price
+      </button>
+      <button className={getAboveClassName} onClick={handleUpdateSelection("getAbove")}>
+        Get Some Money, and have the risk you have to buy above market price
+      </button>
     </div>
   )
 }
 
-const ActionRow3 = () => {
+const MarketActions = ({ showMakeCall, showMakePut, showBuyCall, showSellCall, showBuyPut, showSellPut, onChange }: any) => {
+  const selectedClassName = "btn btn-primary w-32 h-6 leading-6"
+  const unselectedClassName = "btn btn-primary btn-outline w-32 h-6 leading-6"
+
+  const handleUpdateSelection = (selection: string) => () => {
+    onChange(selection)
+  }
+
+  const goLongClassName =
+    showMakeCall != null && showMakePut == null && showBuyCall == null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const buyCallClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall != null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const proactivePutClassName =
+    showMakeCall != null && showMakePut == null && showBuyCall == null && showSellCall == null && showBuyPut != null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const coveredCallClassName =
+    showMakeCall != null && showMakePut == null && showBuyCall == null && showSellCall != null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const goShortClassName =
+    showMakeCall == null && showMakePut != null && showBuyCall == null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const buyPutClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall == null && showSellCall == null && showBuyPut != null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const proactiveCallClassName =
+    showMakeCall == null && showMakePut != null && showBuyCall != null && showSellCall == null && showBuyPut == null && showSellPut == null
+      ? selectedClassName
+      : unselectedClassName
+
+  const coveredPutClassName =
+    showMakeCall == null && showMakePut != null && showBuyCall == null && showSellCall == null && showBuyPut == null && showSellPut != null
+      ? selectedClassName
+      : unselectedClassName
+
+  const riskReversalClassName =
+    showMakeCall == null && showMakePut == null && showBuyCall != null && showSellCall == null && showBuyPut == null && showSellPut != null
+      ? selectedClassName
+      : unselectedClassName
+
+  const protectiveCollarClassName =
+    showMakeCall != null && showMakePut == null && showBuyCall != null && showSellCall == null && showBuyPut == null && showSellPut != null
+      ? selectedClassName
+      : unselectedClassName
+
   return (
     <div className="flex flex-row gap-2  items-center">
-      <button className="btn btn-primary w-32 h-6 leading-6">Go Long</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Go Short</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Covered Call</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Covered Short</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Buy a call</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Sell a call</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Buy a Put</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Sell a Put</button>
-      <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Risk Reversal</button>
+      <button className={goLongClassName} onClick={handleUpdateSelection("goLong")}>
+        Go Long
+      </button>
+
+      <button className={buyCallClassName} onClick={handleUpdateSelection("buyCall")}>
+        Buy a call
+      </button>
+      <button className={proactivePutClassName} onClick={handleUpdateSelection("proactivePut")}>
+        Proactive Put
+      </button>
+      <button className={coveredCallClassName} onClick={handleUpdateSelection("coveredCall")}>
+        Covered Call
+      </button>
+      <div className="divider divider-horizontal w-1" />
+      <button className={goShortClassName} onClick={handleUpdateSelection("goShort")}>
+        Go Short
+      </button>
+      <button className={buyPutClassName} onClick={handleUpdateSelection("buyPut")}>
+        Buy a Put
+      </button>
+      <button className={proactiveCallClassName} onClick={handleUpdateSelection("proactiveCall")}>
+        Proactive call
+      </button>
+      <button className={coveredPutClassName} onClick={handleUpdateSelection("coveredPut")}>
+        Covered Put
+      </button>
+      <div className="divider divider-horizontal w-1" />
+      <button className={riskReversalClassName} onClick={handleUpdateSelection("riskReversal")}>
+        Risk Reversal
+      </button>
+      <button className={protectiveCollarClassName} onClick={handleUpdateSelection("protectiveCollar")}>
+        Protective Collar
+      </button>
       <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Straddle</button>
       <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Strangle</button>
       <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Butterfly</button>
       <button className="btn btn-primary btn-outline w-32 h-6 leading-6">Iron Condor</button>
+      <div className="divider divider-horizontal w-1" />
       <button className="btn btn-primary btn-outline w-32 h-6 leading-6" disabled>
         Long Call Butterfly
       </button>
@@ -588,7 +961,21 @@ const OptionRow = ({
   )
 }
 
-const OptionColumn = ({ direction, source, showDelta, onClick }: { direction: OptionDirection; source: any; showDelta?: boolean; onClick?: any }) => {
+const OptionColumn = ({
+  direction,
+  source,
+  showDelta,
+  isSelected,
+  onClick,
+  onUpdateDelta,
+}: {
+  direction: OptionDirection
+  source: any
+  showDelta?: boolean
+  isSelected?: boolean
+  onClick?: any
+  onUpdateDelta?: any
+}) => {
   const displayRate = formatNumber(source.strikePrice)
 
   const displayMinor = displayRate?.split("").reverse().join("").substring(0, 2).split("").reverse().join("")
@@ -602,6 +989,14 @@ const OptionColumn = ({ direction, source, showDelta, onClick }: { direction: Op
   }
 
   const displayCost = cost == null ? null : formatValue(cost, false)
+
+  const buttonClassBase = "btn btn-sm btn-primary"
+
+  const displayButtonClass = isSelected ? buttonClassBase : buttonClassBase + " btn-outline"
+
+  const handleUpdateDelta = (value: number) => () => {
+    onUpdateDelta(value)
+  }
 
   return (
     <div className="w-24 flex flex-col justify-start items-center gap-2 p-2">
@@ -619,7 +1014,13 @@ const OptionColumn = ({ direction, source, showDelta, onClick }: { direction: Op
         )}
       </div>
 
-      <div className="h-8 ">{cost != null && <button className="btn btn-sm btn-primary btn-outline">{displayCost}</button>}</div>
+      <div className="h-8 ">
+        {cost != null && (
+          <button className={displayButtonClass} onClick={handleUpdateDelta(contractDelta)}>
+            {displayCost}
+          </button>
+        )}
+      </div>
       <div className="divider"></div>
       {source.outcomes?.map((item: any) => (
         <OptionRow item={item} cost={cost} contractDelta={contractDelta} direction={direction} onClick={onClick} />
@@ -628,7 +1029,19 @@ const OptionColumn = ({ direction, source, showDelta, onClick }: { direction: Op
   )
 }
 
-const OptionBlock = ({ source, showDelta = false, onClick }: { source: any; showDelta?: boolean; onClick?: any }) => {
+const OptionBlock = ({
+  source,
+  showDelta = false,
+  selectedDelta = undefined,
+  onClick,
+  onUpdateDelta,
+}: {
+  source: any
+  showDelta?: boolean
+  selectedDelta?: unknown | number
+  onClick?: any
+  onUpdateDelta?: any
+}) => {
   if (source == null) {
     return null
   }
@@ -637,7 +1050,19 @@ const OptionBlock = ({ source, showDelta = false, onClick }: { source: any; show
     <div className="flex flex-row gap-2 border border-primary rounded ">
       <PriceColumn source={source} showDelta={showDelta} />
       {source?.contracts?.map((contract: any) => {
-        return <OptionColumn direction={source.direction} source={contract} showDelta={showDelta} key={contract.delta} onClick={onClick} />
+        const isSelected = contract.delta === selectedDelta
+
+        return (
+          <OptionColumn
+            direction={source.direction}
+            source={contract}
+            showDelta={showDelta}
+            isSelected={isSelected}
+            key={contract.delta}
+            onClick={onClick}
+            onUpdateDelta={onUpdateDelta}
+          />
+        )
       })}
     </div>
   )
