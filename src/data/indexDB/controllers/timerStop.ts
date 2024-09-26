@@ -1,6 +1,6 @@
 import db from "../db"
 
-import updateTimer from "./updateTimer"
+import timerUpdate from "./timerUpdate"
 
 import type { PriceSimulatorDexie } from "../db"
 
@@ -8,7 +8,8 @@ export async function controller(db: PriceSimulatorDexie) {
   if (db.timeout != null) {
     window.clearTimeout(db.timeout)
   }
-  updateTimer({ isTimerActive: false })
+
+  timerUpdate({ isTimerActive: false })
 }
 
 export default function timerStop() {

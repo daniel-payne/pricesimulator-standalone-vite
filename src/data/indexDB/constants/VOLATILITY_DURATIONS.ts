@@ -1,0 +1,1 @@
+export const VOLATILITY_DURATIONS = [5, 7, 10, 14, 20, 30, 60, 90, 120, 180]

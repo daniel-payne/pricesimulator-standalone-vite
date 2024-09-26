@@ -12,11 +12,13 @@ import { Volatility } from "./Volatility"
 export type Analysis = {
   symbol: string | undefined
   notional: number | undefined
+  duration: number | undefined
 
   currentPrice?: Price | null | undefined
   currentVolatility?: Volatility | null | undefined
   currentRate?: Rate | null | undefined
 
+  matchedDuration?: number | null | undefined
   durationVolatility?: Volatility | null | undefined
 
   isMarketActive?: boolean | null | undefined

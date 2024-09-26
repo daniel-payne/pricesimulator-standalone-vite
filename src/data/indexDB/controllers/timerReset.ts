@@ -1,6 +1,6 @@
 import db from "../db"
 
-import updateTimer from "./updateTimer"
+import timerUpdate from "./timerUpdate"
 
 import type { PriceSimulatorDexie } from "../db"
 import timerNextDay from "./timerNextDay"
@@ -12,7 +12,7 @@ export async function controller(db: PriceSimulatorDexie, day?: string) {
   }
 
   if (day == null) {
-    await updateTimer({ isTimerActive: false, currentIndex: DEFAULT_START })
+    await timerUpdate({ isTimerActive: false, currentIndex: DEFAULT_START })
 
     return
   }
@@ -23,7 +23,7 @@ export async function controller(db: PriceSimulatorDexie, day?: string) {
 
   const currentIndex = Math.floor(currentEpoch / 1000 / 60 / 60 / 24)
 
-  await updateTimer({ isTimerActive: false, currentIndex })
+  await timerUpdate({ isTimerActive: false, currentIndex })
 
   await timerNextDay(true)
 }

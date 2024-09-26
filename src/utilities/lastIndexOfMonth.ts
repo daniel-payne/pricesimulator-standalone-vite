@@ -1,5 +1,5 @@
-import formatIndexAsISO from "./formatIndexAaISO"
-import lastDateOfMonth from "./lastDateOfMonth"
+import formatIndexAsISO from "@/utilities/formatIndexAsISO"
+import lastDateOfMonth from "@/utilities/lastDateOfMonth"
 
 export default function lastIndexOfMonth(index: number | null | undefined, dayOfWeek: string = "MON", addMonths: number = 0) {
   const currentISO = formatIndexAsISO(index ?? 0)

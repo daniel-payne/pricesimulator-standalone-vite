@@ -1,5 +1,5 @@
 export type Scenario = {
-  id: number
+  ref: string
   name: string
   description?: string
 

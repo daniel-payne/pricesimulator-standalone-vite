@@ -1,16 +1,13 @@
-import { useLiveQuery } from "dexie-react-hooks"
-
-import db from "@/data/indexDB/db"
-
-import type { Trade } from "@/data/indexDB/types/Trade"
 import compareObjectsBy from "@/utilities/compareObjectsBy"
+import { useLiveQuery } from "dexie-react-hooks"
+import db from "../db"
 
-export default function useTrades(): Array<Trade> | undefined {
-  const trades = useLiveQuery(async () => {
+export default function useTradeData() {
+  const data = useLiveQuery(async () => {
     return await db.trades?.toArray()
   })
 
-  trades?.sort(compareObjectsBy("entryTimestamp"))
+  data?.sort(compareObjectsBy("displayOrder"))
 
-  return trades
+  return data
 }

@@ -4,18 +4,19 @@ import { ScenarioSpeed } from "@/data/indexDB/enums/ScenarioSpeed"
 
 import type { PriceSimulatorDexie } from "@/data/indexDB/db"
 
-import getTimer from "./getTimer"
-import updateTimer from "./updateTimer"
+import timerLoad from "./timerLoad"
 
-import recalculateAll from "./recalculateAll"
+import updateTimer from "./timerUpdate"
 
 // import recalculatePrices from "./recalculatePrices"
 // import recalculateMargins from "./recalculateMargins"
 
 export async function controller(db: PriceSimulatorDexie, takeControl: boolean) {
-  const currentTimer = await getTimer()
+  const currentTimer = await timerLoad()
 
-  // db.transaction(
+  let isTimerActive = currentTimer.isTimerActive
+
+  // await db.transaction(
   //   "rw",
   //   [
   //     "currencies",
@@ -46,7 +47,7 @@ export async function controller(db: PriceSimulatorDexie, takeControl: boolean) 
 
   const isOwner = takeControl === true ? true : currentTimer?.guid === db.guid
 
-  let isTimerActive = takeControl === true ? true : currentTimer?.isTimerActive === true
+  isTimerActive = takeControl === true ? true : currentTimer?.isTimerActive === true
 
   if (isOwner && isTimerActive) {
     if (takeControl === true) {
@@ -56,12 +57,10 @@ export async function controller(db: PriceSimulatorDexie, takeControl: boolean) 
     } else {
       await updateTimer({ currentIndex: currentIndex })
     }
-
-    await recalculateAll()
   }
-  //  }
+  // }
   // )
-  //   .then(async () => {
+
   const { speed } = currentTimer ?? {}
 
   if (isTimerActive === true) {
@@ -69,10 +68,6 @@ export async function controller(db: PriceSimulatorDexie, takeControl: boolean) 
       controller(db, takeControl)
     }, speed ?? ScenarioSpeed.Slow)
   }
-  //     })
-  //     .catch((err) => {
-  //       console.error(err.stack)
-  //     })
 }
 
 export default function timerNextDay(takeControl = false) {

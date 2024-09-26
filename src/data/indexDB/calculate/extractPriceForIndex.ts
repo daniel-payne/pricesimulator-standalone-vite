@@ -1,37 +1,33 @@
 import { DEFAULT_SPREAD } from "../constants/DEFAULT_SPREAD"
+import { Market } from "../types/Market"
 import { Price } from "../types/Price"
-
-// import formatIndexAsDate from "@/utilities/formatIndexAsDate"
-// import formatIndexAsISO from "@/utilities/formatIndexISO"
-// import formatIndexAsDay from "@/utilities/formatIndexDay"
-
-import type { PriceSummary } from "../types/PriceSummary"
+import { Timer } from "../types/Timer"
 
 export default function extractPriceForIndex(
-  currentIndex: number,
-
-  opens: Array<number>,
-  highs: Array<number>,
-  lows: Array<number>,
-  closes: Array<number>,
-
-  priceSummary: PriceSummary,
-
-  spread: number = DEFAULT_SPREAD
+  timer: Timer | undefined,
+  market: Market | undefined,
+  opens: Array<number | null | undefined> | null | undefined,
+  highs: Array<number | null | undefined> | null | undefined,
+  lows: Array<number | null | undefined> | null | undefined,
+  closes: Array<number | null | undefined> | null | undefined
 ) {
+  if (timer == null || market == null || opens == null || highs == null || lows == null || closes == null) {
+    return
+  }
+
+  const { currentIndex } = timer
+
+  const { symbol, priceSpread } = market
+
+  const spread = priceSpread?.length > 0 ? +priceSpread : DEFAULT_SPREAD
+
   const indexEnd = opens.length - 1
 
-  if (currentIndex > indexEnd) {
+  if (currentIndex == null || currentIndex > indexEnd) {
     return
   }
 
-  if (priceSummary.firstActiveIndex == null) {
-    return
-  }
-
-  const symbol = priceSummary.symbol
-
-  const isMarketActive = priceSummary.firstActiveIndex <= currentIndex
+  const isMarketActive = market.firstActiveIndex <= currentIndex
   const isMarketClosed = closes[currentIndex] == null
 
   if (isMarketActive === false) {
@@ -41,6 +37,8 @@ export default function extractPriceForIndex(
   let priorIndex
   let priorOpen
   let priorClose
+  let priorHigh
+  let priorLow
   let priorClosingBid
   let priorClosingAsk
 
@@ -70,9 +68,13 @@ export default function extractPriceForIndex(
 
       priorOpen = opens[priorIndex]
       priorClose = closes[priorIndex]
+      priorHigh = highs[priorIndex]
+      priorLow = lows[priorIndex]
 
-      priorClosingAsk = priorClose * (1 + spread)
-      priorClosingBid = priorClose * (1 - spread)
+      if (priorOpen != null && priorClose != null) {
+        priorClosingAsk = priorClose * (1 + spread)
+        priorClosingBid = priorClose * (1 - spread)
+      }
 
       break
     }
@@ -86,8 +88,10 @@ export default function extractPriceForIndex(
 
       nextOpen = opens[nextIndex]
 
-      nextOpeningAsk = nextOpen * (1 + spread)
-      nextOpeningBid = nextOpen * (1 - spread)
+      if (nextOpen != null) {
+        nextOpeningAsk = nextOpen * (1 + spread)
+        nextOpeningBid = nextOpen * (1 - spread)
+      }
 
       break
     }
@@ -99,21 +103,22 @@ export default function extractPriceForIndex(
     currentHigh = highs[currentIndex]
     currentLow = lows[currentIndex]
 
-    currentMidRangePrice = Math.random() * (currentHigh - currentLow) + currentLow
-    currentMidDayPrice = Math.random() * Math.abs(currentOpen - currentClose) + Math.min(currentOpen, currentClose)
+    if (currentOpen != null && currentClose != null && currentHigh != null && currentLow != null) {
+      currentMidRangePrice = Math.random() * (currentHigh - currentLow) + currentLow
+      currentMidDayPrice = Math.random() * Math.abs(currentOpen - currentClose) + Math.min(currentOpen, currentClose)
 
-    currentAsk = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 + spread)
-    currentBid = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 - spread)
+      currentAsk = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 + spread)
+      currentBid = ((3 * currentMidRangePrice + 1 * currentMidDayPrice) / 4) * (1 - spread)
 
-    currentClosingAsk = currentClose * (1 + spread)
-    currentClosingBid = currentClose * (1 - spread)
+      currentClosingAsk = currentClose * (1 + spread)
+      currentClosingBid = currentClose * (1 - spread)
 
-    hasIntraDayPrices = !(currentOpen === currentClose && currentHigh === currentLow)
+      hasIntraDayPrices = !(currentOpen === currentClose && currentHigh === currentLow)
+    }
   }
 
   const price = {
     symbol,
-
     currentIndex,
 
     isMarketActive,
@@ -132,6 +137,8 @@ export default function extractPriceForIndex(
 
     priorIndex,
     priorOpen,
+    priorHigh,
+    priorLow,
     priorClose,
     priorClosingBid,
     priorClosingAsk,

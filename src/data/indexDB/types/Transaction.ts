@@ -1,11 +1,12 @@
 export type Transaction = {
-  reference: string
+  id: string
   index: number
 
   value: number
   source: string
 
   description?: string
+  reference?: string
 
   [index: string]: any
 }

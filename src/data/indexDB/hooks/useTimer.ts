@@ -2,20 +2,25 @@ import { useLiveQuery } from "dexie-react-hooks"
 
 import db from "@/data/indexDB/db"
 
-import type { Timer } from "@/data/indexDB/types/Timer"
-import { useEffect } from "react"
-import loadTimer from "../controllers/getTimer"
+import { ScenarioSpeed } from "@/data/indexDB/enums/ScenarioSpeed"
 
-export default function useTimer(): Timer | undefined {
-  const timer = useLiveQuery(async () => {
-    return await db.timer?.limit(1).first()
+import { DEFAULT_START } from "@/data/indexDB/constants/DEFAULT_START"
+
+import type { Timer } from "@/data/indexDB/types/Timer"
+
+export default function useTimer(): Timer {
+  let timer = useLiveQuery(async () => {
+    const data = await db.timer?.limit(1).first()
+
+    return data
   })
 
-  useEffect(() => {
-    if (timer == null) {
-      loadTimer()
-    }
-  }, [timer])
+  const defaultTimer = {
+    guid: db.guid,
+    speed: ScenarioSpeed.Slow,
+    currentIndex: DEFAULT_START,
+    isTimerActive: false,
+  }
 
-  return timer
+  return timer ?? (defaultTimer as Timer)
 }
