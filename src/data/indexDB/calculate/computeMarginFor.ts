@@ -2,7 +2,7 @@ import { MarketOrNothing } from "../types/Market"
 import { PriceOrNothing } from "../types/Price"
 import { TradeOrNothing } from "../types/Trade"
 
-export default function calculateMarginFor(trade: TradeOrNothing, market: MarketOrNothing, price: PriceOrNothing) {
+export default function computeMarginFor(trade: TradeOrNothing, market: MarketOrNothing, price: PriceOrNothing) {
   const { id, amount, direction, entryPrice, entryValue, expiryIndex } = trade ?? {}
 
   let priceModifier = market?.priceModifier ?? 1

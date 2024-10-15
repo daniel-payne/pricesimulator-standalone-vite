@@ -1,0 +1,1 @@
+export const INITIAL_MARGIN_REQUIREMENT = 0.1

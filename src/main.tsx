@@ -19,6 +19,7 @@ import HomePage from "./routes/pages/HomePage"
 import TradingPage from "./routes/pages/TradingPage"
 import ScenariosPage from "./routes/pages/ScenariosPage"
 import PricesPage from "./routes/pages/PricesPage"
+import ScenarioPage from "./routes/pages/ScenarioPage"
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,11 @@ const router = createBrowserRouter([
   {
     path: "/scenarios",
     element: <ScenariosPage className="h-full w-full" />,
+    errorElement: <ErrorPage className="h-full w-full" />,
+  },
+  {
+    path: "/scenario/:ref",
+    element: <ScenarioPage className="h-full w-full" />,
     errorElement: <ErrorPage className="h-full w-full" />,
   },
   {

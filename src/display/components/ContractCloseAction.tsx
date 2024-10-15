@@ -15,10 +15,10 @@ type ComponentProps = {
 } & HTMLAttributes<HTMLDivElement>
 
 export default function ContractCloseAction({ trade, settings = {}, name = "ContractActions", children, ...rest }: PropsWithChildren<ComponentProps>) {
-  const handlePlaceOrder = () => {
-    if (settings.onAction && trade?.id) {
+  const handleTradeClose = () => {
+    if (settings.onAction) {
       settings.onAction({
-        action: "contractClose",
+        action: "tradeClose",
         options: {
           id: trade?.id,
         },
@@ -29,7 +29,7 @@ export default function ContractCloseAction({ trade, settings = {}, name = "Cont
   return (
     <div {...rest} data-component={name}>
       <div className="flex flex-row gap-2 items-center">
-        <button className="btn btn-sm btn-primary rounded-3xl " onClick={handlePlaceOrder}>
+        <button className="btn btn-sm btn-primary rounded-3xl " onClick={handleTradeClose}>
           Close The Trade
         </button>
       </div>

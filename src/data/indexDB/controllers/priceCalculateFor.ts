@@ -1,7 +1,7 @@
 import db from "@/data/indexDB/db"
 
 import type { PriceSimulatorDexie } from "@/data/indexDB/db"
-import extractPriceForIndex from "../calculate/calculatePriceForIndex"
+import extractPriceForIndex from "../calculate/computePriceForIndex"
 
 export async function controller(db: PriceSimulatorDexie, symbol: string | null | undefined) {
   if (symbol == null) {
@@ -37,15 +37,15 @@ export async function controller(db: PriceSimulatorDexie, symbol: string | null 
     highs = stored?.data
   }
 
-  if (timer == null || market == null || opens == null || highs == null || lows == null || closes == null) {
-    return
-  }
-
   if (lows == null) {
     const stored = await db.lows.where({ symbol }).first()
 
     db.lowsCache[symbol] = stored?.data
     lows = stored?.data
+  }
+
+  if (timer == null || market == null || opens == null || highs == null || lows == null || closes == null) {
+    return
   }
 
   const currentPrice = extractPriceForIndex(timer, market, opens, highs, lows, closes)

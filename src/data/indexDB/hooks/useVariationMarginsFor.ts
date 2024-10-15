@@ -1,4 +1,4 @@
-import calculateMarginFor from "../calculate/calculateMarginFor"
+import calculateMarginFor from "../calculate/computeMarginFor"
 import useMarketFor from "./useMarketFor"
 import usePriceFor from "./usePriceFor"
 

@@ -8,7 +8,7 @@ import usePriceFor from "@/data/indexDB/hooks/usePriceFor"
 import useInactiveLatestTradeFor from "@/data/indexDB/hooks/useInactiveLatestTradeFor"
 import useActiveLatestTradeFor from "@/data/indexDB/hooks/useActiveLatestTradeFor"
 
-import calculateMarginFor from "@/data/indexDB/calculate/calculateMarginFor"
+import calculateMarginFor from "@/data/indexDB/calculate/computeMarginFor"
 
 import type { Settings } from "@/display/Settings"
 

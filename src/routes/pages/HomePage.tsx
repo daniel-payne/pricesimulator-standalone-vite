@@ -95,10 +95,10 @@ export default function HomePage({ name = "HomePage", ...rest }: PropsWithChildr
               <div className="card w-96 h-80 bg-base-200 shadow-xl overflow-hidden">
                 <div className="card-body">
                   <h4 className="card-title truncate">Scenarios</h4>
-                  <p className="h-8 text-gray-500">
+                  <div className="h-8 text-gray-500">
                     <span>Using pre-defined scenarios that introduce the skills needed to succeed in this trading game.</span>
                     <div className="text-xs mt-4">Time will stop between each scenario to give you a chance to review the knowledge acquired.</div>
-                  </p>
+                  </div>
                 </div>
                 <div className="card-actions justify-between p-4">
                   <div className="p-4 cursor-pointer">
@@ -113,7 +113,7 @@ export default function HomePage({ name = "HomePage", ...rest }: PropsWithChildr
               <div className="card w-96 h-80 bg-base-200 shadow-xl overflow-hidden">
                 <div className="card-body">
                   <h4 className="card-title truncate">Markets</h4>
-                  <p className="h-8 text-gray-500">
+                  <div className="h-8 text-gray-500">
                     <div>Take me back to 1979, and see how well you can grow a starting investment of $5,000</div>
                     <div className="text-xs mt-4">
                       <span>As its not real money, you just hit this</span>
@@ -127,7 +127,7 @@ export default function HomePage({ name = "HomePage", ...rest }: PropsWithChildr
                     <div className="text-xs mt-4">
                       You will retire on 5 May 2023, so you have about 5 hours in the game to make your fortune once the clock starts running.
                     </div>
-                  </p>
+                  </div>
                 </div>
                 <div className="card-actions justify-between p-4">
                   <div className="p-4 cursor-pointer">
@@ -143,12 +143,12 @@ export default function HomePage({ name = "HomePage", ...rest }: PropsWithChildr
               <div className="card w-96 h-80 bg-base-200 shadow-xl overflow-hidden">
                 <div className="card-body">
                   <h4 className="card-title truncate">Theoretical Rates</h4>
-                  <p className="h-8 text-gray-500">
+                  <div className="h-8 text-gray-500">
                     <div>This is the sort of tool a professional team of investors would use to plan there trades</div>
                     <div className="text-xs mt-4">
                       You will get access to this tool after you have a balance of $50,000. The more money you have the easer it is to make money.
                     </div>
-                  </p>
+                  </div>
                 </div>
                 <div className="card-actions justify-between p-4">
                   <div className="p-4 cursor-pointer">

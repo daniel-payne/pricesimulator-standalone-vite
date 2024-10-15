@@ -13,7 +13,7 @@ import type { TradeOrNothing } from "@/data/indexDB/types/Trade"
 import type { TimerOrNothing } from "@/data/indexDB/types/Timer"
 import type { MarginOrNothing } from "@/data/indexDB/types/Margin"
 
-import closeContract from "@/data/indexDB/managers/contractClose"
+import closeContract from "@/data/indexDB/controllers/tradeClose"
 
 import { Settings } from "../Settings"
 
@@ -47,19 +47,9 @@ export default function ContractController({
 }: PropsWithChildren<ComponentProps>) {
   const [showOutcome, setShowOutcome] = useState(false)
 
-  const symbol = market?.symbol
-
   const { showMultiples = false } = settings
 
   const displayInstructions = showMultiples ? "Instructions to Broker" : "Instructions to Market"
-
-  const handleCloseContract = async () => {
-    if (currentTrade) {
-      await closeContract(timer, market, price, currentTrade)
-
-      setShowOutcome(true)
-    }
-  }
 
   const handleStartAgain = async () => {
     setShowOutcome(false)
@@ -72,7 +62,7 @@ export default function ContractController({
 
         <ContractDescription market={market} price={price} timer={timer} settings={settings} />
         {currentTrade == null && showOutcome === false && <StartContract market={market} price={price} settings={settings} />}
-        {currentTrade != null && <StopContract market={market} price={price} trade={currentTrade} settings={settings} onOrder={handleCloseContract} />}
+        {currentTrade != null && <StopContract market={market} price={price} trade={currentTrade} settings={settings} />}
         {currentTrade != null && <DisplayMargin market={market} price={price} trade={currentTrade} margin={margin} timer={timer} settings={settings} />}
         {lastTrade != null && showOutcome === true && <DisplayOutcome market={market} trade={lastTrade} margin={margin} onStartAgain={handleStartAgain} />}
 

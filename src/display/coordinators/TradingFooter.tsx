@@ -2,6 +2,7 @@ import type { HTMLAttributes, PropsWithChildren } from "react"
 import ActiveTradesSummary from "./ActiveTradesSummary"
 import InactiveTradesSummary from "./InactiveTradesSummary"
 import AccountSummary from "./AccountSummary"
+import BalanceModal from "./BalanceModal"
 
 type ComponentProps = {
   name?: string
@@ -13,7 +14,7 @@ export default function TradingFooter({ name = "TradingFooter", ...rest }: Props
       <div className="flex flex-row gap-2 justify-between items-center bg-base-200 p-2">
         <ActiveTradesSummary />
         {/*<InactiveTradesSummary />*/}
-        {/*<AccountSummary /> */}
+        <AccountSummary />
       </div>
     </div>
   )

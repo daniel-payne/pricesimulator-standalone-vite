@@ -15,8 +15,14 @@ import { TimerOrNothing } from "@/data/indexDB/types/Timer"
 import { MarketOrNothing } from "@/data/indexDB/types/Market"
 import { PriceOrNothing } from "@/data/indexDB/types/Price"
 
-import { controller as closeContract } from "./contractClose"
-import priceCalculateFor from "../controllers/priceCalculateFor"
+import { controller as tradeClose } from "./tradeClose"
+
+import priceCalculateFor from "./priceCalculateFor"
+import { Trade } from "../types/Trade"
+import useBalance from "../hooks/useBalance"
+import balanceCalculate from "./balanceCalculate"
+import { INITIAL_MARGIN_REQUIREMENT } from "../constants/INITIAL_MARGIN_REQUIREMENT"
+import formatValue from "@/utilities/formatValue"
 
 export async function controller(
   db: PriceSimulatorDexie,
@@ -32,27 +38,39 @@ export async function controller(
   const market = await db.markets.where({ symbol }).first()
   const price = await priceCalculateFor(symbol)
 
+  const { availableBalance } = await balanceCalculate()
+
   if (timer == null || market == null || price == null) {
     return
   }
 
   const checkSize = size.toLocaleString().toUpperCase()
 
+  let sizeValue = 1
+
   if (checkSize === "QUARTER") {
-    size = 0.5
+    sizeValue = 0.25
   } else if (checkSize === "HALF") {
-    size = 0.5
+    sizeValue = 0.5
   } else if (checkSize === "ONE") {
-    size = 1
+    sizeValue = 1
   } else if (checkSize === "TWO") {
-    size = 2
+    sizeValue = 2
+  }
+
+  const midPrice = price?.isMarketClosed ? price?.priorClose : price?.currentOpen
+  const contractPoints = ((market?.contractSize ?? 1) / (market?.priceSize ?? 1)) * (market?.priceModifier ?? 1)
+  const contractValue = (midPrice ?? 0) * (contractPoints ?? 1) * sizeValue
+
+  if (contractValue * INITIAL_MARGIN_REQUIREMENT > availableBalance) {
+    throw new Error(`Insufficient funds, you need to have ${formatValue(contractValue * INITIAL_MARGIN_REQUIREMENT)} to complete this trade`)
   }
 
   const count = await db.trades?.count()
   const activeTrades = await db.trades?.where({ symbol, status: TradeStatus.Open }).toArray()
 
   for (const trade of activeTrades) {
-    await closeContract(db, timer, market, price, trade)
+    await tradeClose(db, trade.id)
   }
 
   const entryIndex = timer?.currentIndex
@@ -61,8 +79,8 @@ export async function controller(
   let entryPrice
   let entryCost
 
-  let priceModifier = +market?.priceModifier ?? 1
-  let priceSize = +market?.priceSize ?? 1
+  let priceModifier = +(market?.priceModifier ?? 1)
+  let priceSize = +(market?.priceSize ?? 1)
 
   if (!Number.isFinite(priceModifier)) {
     priceModifier = 1
@@ -72,14 +90,14 @@ export async function controller(
     priceSize = 1
   }
 
-  if (size != null) {
+  if (sizeValue === 1) {
     if (price?.isMarketClosed) {
       entryPrice = price?.nextOpen
     } else {
       entryPrice = price?.currentClose
     }
 
-    entryCost = DEFAULT_CONTRACT_COST * size
+    entryCost = DEFAULT_CONTRACT_COST * +sizeValue
   } else {
     if (price?.isMarketClosed) {
       entryPrice = direction === TradeDirection.Call ? price?.nextAsk : price?.nextBid
@@ -89,7 +107,7 @@ export async function controller(
   }
 
   if (market != null && entryIndex != null && entryPrice != null) {
-    const contractAmount = size * market?.contractSize
+    const contractAmount = +sizeValue * market?.contractSize
 
     const entryValue = ((entryPrice * priceModifier) / priceSize) * contractAmount
 
@@ -101,7 +119,7 @@ export async function controller(
         symbol,
         direction,
         amount: entryValue,
-        size,
+        size: sizeValue,
         entryValue,
         entryPrice,
         entryCost,
@@ -112,7 +130,7 @@ export async function controller(
         exitTimestamp: undefined,
         expiryIndex,
         profit: undefined,
-      }
+      } as Trade
 
       await db.trades?.put(newContract)
 
@@ -123,13 +141,6 @@ export async function controller(
   return undefined
 }
 
-export default function openContract(
-  // timer: TimerOrNothing,
-  // market: MarketOrNothing,
-  // price: PriceOrNothing,
-  symbol: string,
-  size: string | number,
-  direction: TradeDirection
-) {
+export default function openContract(symbol: string, size: string | number, direction: TradeDirection) {
   return controller(db, symbol, size, direction)
 }

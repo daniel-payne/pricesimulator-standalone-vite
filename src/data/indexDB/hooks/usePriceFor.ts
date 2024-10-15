@@ -5,7 +5,7 @@ import useOpensFor from "./useOpensFor"
 import useTimer from "./useTimer"
 import useMarketFor from "./useMarketFor"
 
-import calculatePriceForIndex from "../calculate/calculatePriceForIndex"
+import calculatePriceForIndex from "../calculate/computePriceForIndex"
 
 export default function usePriceFor(symbol: string | null | undefined) {
   const timer = useTimer()

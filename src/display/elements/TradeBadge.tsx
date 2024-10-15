@@ -1,7 +1,7 @@
 // import { Margin } from "@/data/indexDB/types/Margin"
 // import { Trade } from "@/data/indexDB/types/Trade"
 
-import calculateMarginFor from "@/data/indexDB/calculate/calculateMarginFor"
+import calculateMarginFor from "@/data/indexDB/calculate/computeMarginFor"
 import useMarginFor from "@/data/indexDB/hooks/useVariationMarginFor"
 import useMarketFor from "@/data/indexDB/hooks/useMarketFor"
 import usePriceFor from "@/data/indexDB/hooks/usePriceFor"

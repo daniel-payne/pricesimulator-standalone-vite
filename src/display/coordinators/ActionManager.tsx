@@ -11,6 +11,7 @@ import useInactiveLatestTradeFor from "@/data/indexDB/hooks/useInactiveLatestTra
 import ContractCloseAction from "../components/ContractCloseAction"
 import TradePositionDisplay from "../components/TradePositionDisplay"
 import useVariationMarginFor from "@/data/indexDB/hooks/useVariationMarginFor"
+import formatValue from "@/utilities/formatValue"
 
 type ComponentProps = {
   symbol?: string
@@ -36,9 +37,13 @@ export default function ActionManager({ symbol, settings = {}, name = "TradingAc
     return
   }
 
+  const midPrice = price?.isMarketClosed ? price?.priorClose : price?.currentOpen
+  const contractPoints = ((market?.contractSize ?? 1) / (market?.priceSize ?? 1)) * (market?.priceModifier ?? 1)
+  const contractValue = (midPrice ?? 0) * (contractPoints ?? 1)
+
   return (
     <div {...rest} data-component={name}>
-      {trade === "contract" && currentTrade == null && <ContractOpenActions symbol={symbol} settings={settings} />}
+      {trade === "contract" && currentTrade == null && <ContractOpenActions symbol={symbol} contractValue={contractValue} settings={settings} />}
       {trade === "contract" && currentTrade != null && (
         <div className="flex flex-row gap-2 items-center">
           <TradePositionDisplay margin={margin} settings={settings} />

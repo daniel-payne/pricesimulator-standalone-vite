@@ -6,12 +6,19 @@ import { DEFAULT_CONTRACT_COST } from "@/data/indexDB/constants/DEFAULT_CONTRACT
 import { TradeStatus } from "@/data/indexDB/enums/TradeStatus"
 import generateID from "@/utilities/generateID"
 
-import { TimerOrNothing } from "../types/Timer"
-import { TradeOrNothing } from "../types/Trade"
-import { MarketOrNothing } from "../types/Market"
-import { PriceOrNothing } from "../types/Price"
+import priceCalculateFor from "./priceCalculateFor"
 
-export async function controller(db: PriceSimulatorDexie, timer: TimerOrNothing, market: MarketOrNothing, price: PriceOrNothing, trade: TradeOrNothing) {
+export async function controller(db: PriceSimulatorDexie, id: string) {
+  const timer = await db.timer?.toCollection().first()
+
+  const trade = await db.trades?.where({ id }).first()
+
+  const { symbol = "MISSING" } = trade || {}
+
+  const market = await db.markets?.where({ symbol }).first()
+
+  const price = await priceCalculateFor(symbol)
+
   if (trade == null || timer == null || market == null || price == null) {
     return
   }
@@ -21,6 +28,14 @@ export async function controller(db: PriceSimulatorDexie, timer: TimerOrNothing,
   if (trade != null && market != null && currentIndex != null) {
     let exitPrice
     let exitCost
+
+    let exitIndex
+
+    if (price?.isMarketClosed) {
+      exitIndex = price?.nextIndex
+    } else {
+      exitIndex = price?.currentIndex
+    }
 
     if (trade.size === 1) {
       if (price?.isMarketClosed) {
@@ -38,7 +53,7 @@ export async function controller(db: PriceSimulatorDexie, timer: TimerOrNothing,
       }
     }
 
-    if (exitPrice != null) {
+    if (exitPrice != null && exitIndex != null) {
       if (price != null) {
         const newContract = structuredClone(trade)
 
@@ -46,7 +61,7 @@ export async function controller(db: PriceSimulatorDexie, timer: TimerOrNothing,
 
         newContract.exitPrice = exitPrice
         newContract.exitCost = exitCost
-        newContract.exitIndex = currentIndex
+        newContract.exitIndex = exitIndex
 
         if (newContract.entryPrice != null && newContract.entryValue != null) {
           newContract.exitDifference = newContract.exitPrice - newContract.entryPrice
@@ -62,7 +77,7 @@ export async function controller(db: PriceSimulatorDexie, timer: TimerOrNothing,
 
           await db.transactions?.add({
             id: generateID(),
-            index: currentIndex,
+            index: exitIndex,
             source: "TRADE",
             value: newContract.profit,
           })
@@ -76,6 +91,6 @@ export async function controller(db: PriceSimulatorDexie, timer: TimerOrNothing,
   return undefined
 }
 
-export default function closeContract(timer: TimerOrNothing, market: MarketOrNothing, price: PriceOrNothing, trade: TradeOrNothing) {
-  return controller(db, timer, market, price, trade)
+export default function tradeClose(id: string) {
+  return controller(db, id)
 }

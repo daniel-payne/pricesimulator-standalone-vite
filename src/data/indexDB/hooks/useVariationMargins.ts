@@ -1,18 +1,20 @@
 import db from "@/data/indexDB/db"
 
-import calculateMarginFor from "../calculate/calculateMarginFor"
+import computeMarginFor from "../calculate/computeMarginFor"
 
 import useActiveTrades from "./useActiveTrades"
 
 import priceCalculateFor from "../controllers/priceCalculateFor"
 import { useEffect, useState } from "react"
 import { Margin } from "../types/Margin"
+import useTimer from "./useTimer"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export default function useVariationMargins() {
   const [margins, setMargins] = useState<Array<Margin>>([])
 
+  const timer = useTimer()
   const trades = useActiveTrades()
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export default function useVariationMargins() {
         const price = await priceCalculateFor(symbol)
 
         if (market != null && price != null) {
-          const margin = calculateMarginFor(trade, market, price)
+          const margin = computeMarginFor(trade, market, price)
 
           if (margin != null) {
             newMargins.push(margin)
@@ -39,7 +41,7 @@ export default function useVariationMargins() {
     }
 
     recalculate()
-  }, [trades])
+  }, [trades, timer])
 
   return margins
 }

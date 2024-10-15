@@ -17,20 +17,12 @@ type ComponentProps = {
 } & HTMLAttributes<HTMLDivElement>
 
 export default function StartContract({ market, price, settings = {}, name = "StartContract", ...rest }: PropsWithChildren<ComponentProps>) {
-  const { showMultiples = false } = settings
-
   const [size, setSize] = useState<string>("one")
   const [direction, setDirection] = useState<string>("CALL")
 
-  // const displayCallLabel = showMultiples ? "Call" : "Buy"
-  // const displayPutLabel = showMultiples ? "Put" : "Sell"
-
   const displayOrderEvent = price?.isMarketClosed ? "As soon as the market opens" : "As soon as you can before the market closes today"
 
-  // const classNamesBuy = direction === "CALL" ? "btn btn-sm btn-primary btn-buy" : "btn btn-xs btn-outline btn-primary btn-buy"
-  // const classNamesSell = direction === "PUT" ? "btn btn-sm btn-primary btn-sell" : "btn btn-xs btn-outline btn-primary btn-sell"
-
-  const handlePlaceOrder = () => {
+  const handleContractOpen = () => {
     if (settings.onAction) {
       settings.onAction({
         action: "contractOpen",
@@ -42,30 +34,6 @@ export default function StartContract({ market, price, settings = {}, name = "St
       })
     }
   }
-
-  // const handleDirectionBuy = () => {
-  //   setDirection("CALL")
-  // }
-
-  // const handleDirectionSell = () => {
-  //   setDirection("PUT")
-  // }
-
-  // const handleSizeQuarter = () => {
-  //   setSize(0.25)
-  // }
-
-  // const handleSizeHalf = () => {
-  //   setSize(0.5)
-  // }
-
-  // const handleSizeOne = () => {
-  //   setSize(1)
-  // }
-
-  // const handleSizeTwo = () => {
-  //   setSize(2)
-  // }
 
   return (
     <div {...rest} data-controller={name}>
@@ -83,7 +51,7 @@ export default function StartContract({ market, price, settings = {}, name = "St
             <div>{market?.name}</div>
           </div>
 
-          <button className="btn  btn-primary rounded-3xl " onClick={handlePlaceOrder}>
+          <button className="btn  btn-primary rounded-3xl " onClick={handleContractOpen}>
             Place the order
           </button>
           <div className="fg--subheading">{displayOrderEvent}</div>

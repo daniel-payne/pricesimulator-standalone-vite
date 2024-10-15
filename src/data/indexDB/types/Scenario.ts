@@ -3,7 +3,7 @@ export type Scenario = {
   name: string
   description?: string
 
-  symbols: Array<string>
+  symbols: string
 
   [index: string]: any
 }

@@ -245,6 +245,10 @@
     color: var(--outcome-loss) !important;
   }
 
+  .text-partial {
+    color: var(--outcome-partial) !important;
+  }
+
   /* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 
   .fg-price-info--closed {

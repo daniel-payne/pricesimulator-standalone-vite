@@ -18,42 +18,47 @@ type ComponentProps = {
   name?: string
 } & HTMLAttributes<HTMLDivElement>
 
-export default function StopContract({ market, price, trade, settings, onOrder, name = "StopContract", ...rest }: PropsWithChildren<ComponentProps>) {
+export default function StopContract({ market, price, trade, settings = {}, onOrder, name = "StopContract", ...rest }: PropsWithChildren<ComponentProps>) {
   if (trade == null || market == null) {
     return "missing"
   }
 
-  const { showMultiples = false } = settings || {}
+  // const { showMultiples = false } = settings
 
-  const displayCallLabel = showMultiples ? "Call" : "Buying"
-  const displayPutLabel = showMultiples ? "Put" : "Selling"
+  // const displayCallLabel = showMultiples ? "Call" : "Buying"
+  // const displayPutLabel = showMultiples ? "Put" : "Selling"
 
-  const displayClassesSizeQuarter = trade.size === 0.25 ? "btn btn-sm btn-primary" : "hidden"
-  const displayClassesSizeHalf = trade.size === 0.5 ? "btn btn-sm btn-primary" : "hidden"
-  const displayClassesSizeOne = trade.size === 1 ? "btn btn-sm btn-primary" : "hidden"
-  const displayClassesSizeTwo = trade.size === 2 ? "btn btn-sm btn-primary" : "hidden"
+  // const displayClassesSizeQuarter = trade.size === 0.25 ? "btn btn-sm btn-primary" : "hidden"
+  // const displayClassesSizeHalf = trade.size === 0.5 ? "btn btn-sm btn-primary" : "hidden"
+  // const displayClassesSizeOne = trade.size === 1 ? "btn btn-sm btn-primary" : "hidden"
+  // const displayClassesSizeTwo = trade.size === 2 ? "btn btn-sm btn-primary" : "hidden"
 
   const displayOrderEvent = price?.isMarketClosed ? "As soon as the market opens" : "As soon as you can before the market closes today"
 
-  const classNamesBuy = trade.direction === "PUT" ? "btn btn-sm btn-primary btn-buy" : "hidden"
-  const classNamesSell = trade.direction === "CALL" ? "btn btn-sm btn-primary btn-sell" : "hidden"
+  // const classNamesBuy = trade.direction === "PUT" ? "btn btn-sm btn-primary btn-buy" : "hidden"
+  // const classNamesSell = trade.direction === "CALL" ? "btn btn-sm btn-primary btn-sell" : "hidden"
 
-  let contractPrefix = ""
-  let contractSuffix = ""
+  // let contractPrefix = ""
+  // let contractSuffix = ""
 
-  if (trade.size === 0.25) {
-    contractPrefix = "of a"
-  } else if (trade.size === 0.5) {
-    contractPrefix = "a"
-  } else if (trade.size === 2) {
-    contractSuffix = "s"
-  }
+  // if (trade.size === 0.25) {
+  //   contractPrefix = "of a"
+  // } else if (trade.size === 0.5) {
+  //   contractPrefix = "a"
+  // } else if (trade.size === 2) {
+  //   contractSuffix = "s"
+  // }
 
   const tradeDirection = trade.direction === "CALL" ? "PUT" : "CALL"
 
-  const handlePlaceOrder = () => {
-    if (onOrder) {
-      onOrder()
+  const handleTradeClose = () => {
+    if (settings.onAction) {
+      settings.onAction({
+        action: "tradeClose",
+        options: {
+          id: trade?.id,
+        },
+      })
     }
   }
 
@@ -73,7 +78,7 @@ export default function StopContract({ market, price, trade, settings, onOrder, 
             <div>{market?.name}</div>
           </div>
 
-          <button className="btn  btn-primary rounded-3xl " onClick={handlePlaceOrder}>
+          <button className="btn  btn-primary rounded-3xl " onClick={handleTradeClose}>
             Place the order
           </button>
           <div className="fg--subheading">{displayOrderEvent}</div>

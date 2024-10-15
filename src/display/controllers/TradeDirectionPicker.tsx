@@ -24,9 +24,7 @@ export default function TradeDirectionPicker({
 }: PropsWithChildren<ComponentProps>) {
   const readOnly = onPicked == null
 
-  direction = direction?.toUpperCase()
-
-  const [data, setData] = useState<string>(direction)
+  const [data, setData] = useState<string>(direction?.toUpperCase())
 
   const classNamesBuy = data === "CALL" ? "btn btn-sm btn-primary btn-buy" : "btn btn-xs btn-outline btn-primary btn-buy"
   const classNamesSell = data === "PUT" ? "btn btn-sm btn-primary btn-sell" : "btn btn-xs btn-outline btn-primary btn-sell"

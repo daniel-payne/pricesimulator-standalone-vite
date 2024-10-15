@@ -38,7 +38,7 @@ export default function DisplayMargin({
     return null
   }
 
-  const tradeDirection = trade.direction === "CALL" ? "PUT" : "CALL"
+  const tradeDirection = trade.direction === "CALL" ? "CA" : "CALL"
 
   const { showMultiples = false } = settings
 
@@ -106,7 +106,7 @@ export default function DisplayMargin({
           <div className="flex flex-row gap-2 justify-center items-center">
             <ContractSizePicker size={trade.size} settings={settings} />
             <div>To</div>
-            <TradeDirectionPicker direction={tradeDirection} settings={settings} />
+            <TradeDirectionPicker direction={trade.direction} settings={settings} />
             <div>{market?.name}</div>
           </div>
 

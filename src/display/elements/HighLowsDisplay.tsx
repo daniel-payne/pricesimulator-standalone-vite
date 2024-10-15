@@ -158,6 +158,8 @@ export default function HighLowsDisplay({
     startIndex = startIndex - 1 * 365
   } else if (range === "5y") {
     startIndex = startIndex - 5 * 365
+  } else if (range === "at") {
+    startIndex = 0
   }
 
   if (startIndex < 0) {
@@ -324,6 +326,10 @@ export default function HighLowsDisplay({
 
       // let minProfitPoint = trade.direction === "CALL" ? trade.entryPrice : trade.entryPrice
       // let maxProfitPoint = trade.direction === "CALL" ? trade.entryPrice * 1000 : 0
+      const isInProfit = (trade.profit ?? 0) > 0
+
+      const lineColor = isInProfit ? "--outcome-profit-25" : "--outcome-loss-25"
+      const cssColor = cssVar(lineColor)
 
       const entryPoint = {
         type: "point",
@@ -332,8 +338,8 @@ export default function HighLowsDisplay({
         yValue: trade?.entryPrice,
         xValue: trade?.entryIndex,
 
-        borderColor: cssVar("--outcome-profit-25"),
-        backgroundColor: cssVar("--outcome-profit-25"),
+        borderColor: cssColor,
+        backgroundColor: cssColor,
         adjustScaleRange: false,
         display: true,
       }
@@ -345,8 +351,8 @@ export default function HighLowsDisplay({
         yValue: trade?.exitPrice,
         xValue: trade?.exitIndex,
 
-        borderColor: cssVar("--outcome-profit-25"),
-        backgroundColor: cssVar("--outcome-profit-25"),
+        borderColor: cssColor,
+        backgroundColor: cssColor,
         adjustScaleRange: false,
         display: true,
       }
@@ -361,8 +367,8 @@ export default function HighLowsDisplay({
         yMax: trade?.exitPrice,
         xMax: trade?.exitIndex,
 
-        borderColor: cssVar("--outcome-profit-25"),
-        backgroundColor: cssVar("--outcome-profit-25"),
+        borderColor: cssColor,
+        backgroundColor: cssColor,
         adjustScaleRange: false,
         display: true,
       }

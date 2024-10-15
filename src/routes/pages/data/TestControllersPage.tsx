@@ -21,7 +21,7 @@ import CurrentDateDisplay from "@/display/components/CurrentDateDisplay"
 import CurrentOpenDisplay from "@/display/components/CurrentOpenDisplay"
 import useMarketFor from "@/data/indexDB/hooks/useMarketFor"
 import { TradeDirection } from "@/data/indexDB/enums/TradeDirection"
-import openContract from "@/data/indexDB/managers/contractOpen"
+import openContract from "@/data/indexDB/controllers/contractOpen"
 import timerNextDay from "@/data/indexDB/controllers/timerNextDay"
 import scenariosLoadAll from "@/data/indexDB/controllers/scenariosLoadAll"
 import transactionsAdd from "@/data/indexDB/controllers/transactionsAdd"
@@ -30,16 +30,16 @@ import clearUserData from "@/data/indexDB/controllers/clearUserData"
 import ratesLoadAll from "@/data/indexDB/controllers/ratesLoadAll.1"
 import ratesLoadFor from "@/data/indexDB/controllers/ratesLoadFor"
 import applicationLoad from "@/data/indexDB/controllers/applicationLoad"
-import contractOpen from "@/data/indexDB/managers/contractOpen"
+import contractOpen from "@/data/indexDB/controllers/contractOpen"
 import { useLatest } from "react-use"
 import useActiveLatestTradeFor from "@/data/indexDB/hooks/useActiveLatestTradeFor"
-import contractClose from "@/data/indexDB/managers/contractClose"
+import contractClose from "@/data/indexDB/controllers/tradeClose"
 import favoritesClear from "@/data/localStorage/controllers/favoritesClear"
 import favoritesAdd from "@/data/localStorage/controllers/favoritesAdd"
 import favoritesRemove from "@/data/localStorage/controllers/favoritesRemove"
 import favoritesToggle from "@/data/localStorage/controllers/favoritesToggle"
 
-const SelectController = ({ name, disabled, type, onRun }: PropsWithChildren<any>): JSX.Element => {
+const SelectController = ({ name, disabled, type, large, onRun }: PropsWithChildren<any>): JSX.Element => {
   let displayClasses = "w-48 btn btn-sm"
 
   if (type == null || type === "primary") {
@@ -56,6 +56,10 @@ const SelectController = ({ name, disabled, type, onRun }: PropsWithChildren<any
     displayClasses += " btn-info"
   } else if (type === "accent") {
     displayClasses += " btn-accent"
+  }
+
+  if (large) {
+    displayClasses += " btn-lg"
   }
 
   const handleRunController = () => {
@@ -109,6 +113,14 @@ export default function TestControllersPage({ name = "TestControllersPage", ...r
           </div>
         </div>
 
+        <div className="divider">Timer</div>
+        <div className="p-2 flex flex-row flex-wrap gap-4 items-center">
+          <SelectController name="timer Stop" type="warning" large onRun={() => timerStop(true)} />
+          <SelectController name="timer Start" type="success" large onRun={() => timerStart()} />
+          <SelectController name="timer Next Day" type="primary" onRun={() => timerNextDay(true)} />
+          <SelectController name="timer Reset" type="error" onRun={() => timerReset()} />
+        </div>
+
         <div className="divider">Delete</div>
         <div className="p-2 flex flex-row flex-wrap gap-4">
           <SelectController name="clear User Data" type="warning" onRun={() => clearUserData()} />
@@ -132,12 +144,6 @@ export default function TestControllersPage({ name = "TestControllersPage", ...r
 
         <div className="divider">Timer</div>
         <div className="p-2 flex flex-row flex-wrap gap-4">
-          <SelectController name="timer Next Day" type="primary" onRun={() => timerNextDay(true)} />
-          <SelectController name="timer Start" type="success" onRun={() => timerStart()} />
-          <SelectController name="timer Stop" type="warning" onRun={() => timerStop(true)} />
-          <SelectController name="timer Reset" type="error" onRun={() => timerReset()} />
-        </div>
-        <div className="p-2 flex flex-row flex-wrap gap-4">
           <SelectController name="timer Start Fast" type="success" onRun={() => timerStart(ScenarioSpeed.Fast)} />
           <SelectController name="timer Start Medium" type="success" onRun={() => timerStart(ScenarioSpeed.Medium)} />
           <SelectController name="timer Start Slow" type="success" onRun={() => timerStart(ScenarioSpeed.Slow)} />
@@ -155,10 +161,10 @@ export default function TestControllersPage({ name = "TestControllersPage", ...r
 
         <div className="divider">Trade</div>
         <div className="p-2 flex flex-row flex-wrap gap-4">
-          <SelectController name="contract Open CALL 1" onRun={() => contractOpen(symbol, TradeDirection.Call, 1)} />
-          <SelectController name="contract Open PUT 1" onRun={() => contractOpen(symbol, TradeDirection.Put, 1)} />
+          <SelectController name="contract Open CALL 1" onRun={() => contractOpen(symbol, 1, TradeDirection.Call)} />
+          <SelectController name="contract Open PUT 1" onRun={() => contractOpen(symbol, 1, TradeDirection.Put)} />
 
-          <SelectController name={`tradeClose ${trade?.id ?? ""}`} disabled={trade?.id == null} onRun={() => contractClose(timer, market, price, trade)} />
+          <SelectController name={`tradeClose ${trade?.id ?? ""}`} disabled={trade?.id == null} onRun={() => contractClose(trade?.id ?? "")} />
         </div>
 
         <div className="divider">Local Controllers</div>

@@ -41,6 +41,7 @@ import useActiveLatestTradeFor from "@/data/indexDB/hooks/useActiveLatestTradeFo
 import useVariationMargins from "@/data/indexDB/hooks/useVariationMargins"
 import useVariationMarginsFor from "@/data/indexDB/hooks/useVariationMarginsFor"
 import useVariationMarginFor from "@/data/indexDB/hooks/useVariationMarginFor"
+import useBalance from "@/data/indexDB/hooks/useBalance"
 
 type ComponentProps = {
   name?: string
@@ -63,7 +64,7 @@ const SelectHook = ({ name, symbol, code, disabled, onSelect }: PropsWithChildre
     }
   }
 
-  const displayClasses = symbol == null ?? code == null ? "w-48 btn btn-primary btn-sm" : "w-48 btn btn-info btn-sm"
+  const displayClasses = symbol == null || code == null ? "w-48 btn btn-primary btn-sm" : "w-48 btn btn-info btn-sm"
 
   return (
     <button className={displayClasses} disabled={disabled} onClick={handleSelection}>
@@ -120,6 +121,8 @@ export default function TestHooksPage({ name = "HooksTestHooksPagePage", ...rest
   const variationMargins = useVariationMargins()
   const variationMarginsFor = useVariationMarginsFor(symbol)
   const variationMarginFor = useVariationMarginFor(id)
+
+  const balance = useBalance()
 
   let data
 
@@ -179,12 +182,14 @@ export default function TestHooksPage({ name = "HooksTestHooksPagePage", ...rest
     data = activeSymbols
   } else if (checkIfSelected("favoriteSymbols")) {
     data = favoriteSymbols
-  } else if (checkIfSelected("margins")) {
+  } else if (checkIfSelected("variationMargins")) {
     data = variationMargins
-  } else if (checkIfSelected("marginsFor")) {
+  } else if (checkIfSelected("variationMarginsFor")) {
     data = variationMarginsFor
-  } else if (checkIfSelected("marginFor")) {
+  } else if (checkIfSelected("variationMarginFor")) {
     data = variationMarginFor
+  } else if (checkIfSelected("balance")) {
+    data = balance
   }
   // Local Storage
   else if (checkIfSelected("actionsSelection")) {
@@ -207,7 +212,7 @@ export default function TestHooksPage({ name = "HooksTestHooksPagePage", ...rest
 
   return (
     <div {...rest} data-component={name}>
-      <div className="h-full w-full p-2 flex flex-col overflow-hidden">
+      <div className="h-full w-full p-2 flex flex-col overflow-auto">
         <div className=" flex flex-row gap-2 items-center justify-between">
           <div className="flex flex-row gap-2 mt-2 items-center flex-wrap">
             <Link to="/">
@@ -286,6 +291,11 @@ export default function TestHooksPage({ name = "HooksTestHooksPagePage", ...rest
               <SelectHook name="useVariationMarginsFor" symbol={symbol} onSelect={setSelection} />
               <SelectHook name="useVariationMarginFor" symbol={id} onSelect={setSelection} />
             </div>
+            <div className="divider">Balance</div>
+            <div className="p-2 flex flex-row flex-wrap gap-4">
+              <SelectHook name="useBalance" onSelect={setSelection} />
+            </div>
+
             <div className="divider">IndexDB Hooks</div>
             <div className="p-2 flex flex-row flex-wrap gap-4">
               <SelectHook name="useActionsSelection" onSelect={setSelection} />
