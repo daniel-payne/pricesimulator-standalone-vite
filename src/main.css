@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 .h-128 {
   height: 32rem;
@@ -254,12 +255,15 @@
   .fg-price-info--closed {
     color: var(--text-d);
   }
+
   .fg-price-info--profit {
     color: var(--outcome-profit);
   }
+
   .fg-price-info--loss {
     color: var(--outcome-loss);
   }
+
   .fg-price-info--no-movement {
     color: var(--outcome-neutral);
   }
