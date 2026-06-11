@@ -1,4 +1,5 @@
 import type { HTMLAttributes, PropsWithChildren } from "react"
+import consoleInfo from "@/utilities/consoleInfo"
 
 import MarketContractDescription from "../components/MarketContractDescription"
 import MarketSummaryDescription from "../components/MarketSummaryDescription"
@@ -49,6 +50,7 @@ export default function SymbolManager({
   const { view = "contracted", content = "info" } = settings
 
   if (market == null || price == null) {
+    consoleInfo(`SymbolManager: returning null for ${symbol} — market=${JSON.stringify(market)}, price=${JSON.stringify(price)}`)
     return null
   }
 

@@ -32,26 +32,35 @@ const csvToObjectForPrices = (item: any) => {
   return data
 }
 
+import consoleInfo from "@/utilities/consoleInfo"
+
 export async function controller(db: PriceSimulatorDexie, symbol: string | undefined) {
+  consoleInfo(`ohlcLoadFor: controller started for symbol = ${symbol}`)
   if (symbol == null) {
+    consoleInfo("ohlcLoadFor: symbol is null/undefined, returning early")
     return
   }
 
+  consoleInfo(`ohlcLoadFor: checking caches for ${symbol}...`)
   const cachedOpens = db.opensCache[symbol]
   const cachedHighs = db.highsCache[symbol]
   const cachedLows = db.lowsCache[symbol]
   const cachedCloses = db.closesCache[symbol]
 
   if (cachedOpens != null && cachedHighs != null && cachedLows != null && cachedCloses != null) {
+    consoleInfo(`ohlcLoadFor: caches found for ${symbol}, returning early`)
     return
   }
 
+  consoleInfo(`ohlcLoadFor: querying db for stored opens/highs/lows/closes for ${symbol}...`)
   const storedOpens = await db.opens.get(symbol)
   const storedHighs = await db.highs.get(symbol)
   const storedLows = await db.lows.get(symbol)
   const storedCloses = await db.closes.get(symbol)
+  consoleInfo(`ohlcLoadFor: stored opens found? = ${storedOpens != null}, highs? = ${storedHighs != null}`)
 
   if (storedOpens != null && storedHighs != null && storedLows != null && storedCloses != null) {
+    consoleInfo(`ohlcLoadFor: storing retrieved db records into cache for ${symbol}`)
     db.opensCache[symbol] = storedOpens.data
     db.highsCache[symbol] = storedHighs.data
     db.lowsCache[symbol] = storedLows.data
@@ -66,32 +75,46 @@ export async function controller(db: PriceSimulatorDexie, symbol: string | undef
   //   return
   // }
 
+  consoleInfo(`ohlcLoadFor: symbol ${symbol} not in cache/db. Fetching metadata from db.markets...`)
   LOADING[symbol] = true
 
   const market = await db.markets.get(symbol)
+  consoleInfo(`ohlcLoadFor: retrieved market metadata from db for ${symbol}`, market)
 
   if (market?.symbol == null) {
+    consoleInfo(`ohlcLoadFor: market symbol for ${symbol} not found in db.markets!`)
+    LOADING[symbol] = false
     return
   }
 
   if (market?.firstActiveIndex != null) {
+    consoleInfo(`ohlcLoadFor: firstActiveIndex is already populated in db for ${symbol}, skipping fetch`)
+    LOADING[symbol] = false
     return
   }
 
-  const response = await fetch(`/public/prices/${market.symbol}.txt`, {})
+  const url = `/prices/${encodeURIComponent(market.symbol.toLowerCase())}.txt`
+  consoleInfo(`ohlcLoadFor: fetching price file from ${url}...`)
+  const response = await fetch(url, {})
+  consoleInfo(`ohlcLoadFor: fetch response status = ${response.status}, ok = ${response.ok}`)
 
   if (response.ok === false) {
+    consoleInfo(`ohlcLoadFor: fetch failed for ${symbol}. status text: ${response.statusText}`)
+    LOADING[symbol] = false
     return { error: response.statusText }
   }
 
   const csv = await response.text()
+  consoleInfo(`ohlcLoadFor: csv text length = ${csv.length}`)
 
   const json = Papa.parse(csv, { header: true })
+  consoleInfo(`ohlcLoadFor: parsed csv rows count = ${json.data?.length}`)
 
   const prices = json.data
     .map(csvToObjectForPrices)
     .filter((item: any) => item?.open)
     .filter((item) => item.index >= 0)
+  consoleInfo(`ohlcLoadFor: filtered prices count = ${prices.length}`)
 
   const opens = { symbol, data: Array(20000).fill(undefined) }
   const highs = { symbol, data: Array(20000).fill(undefined) }
@@ -156,9 +179,12 @@ export async function controller(db: PriceSimulatorDexie, symbol: string | undef
     firstActiveIndex,
     firstInterDayIndex,
   }
+  consoleInfo(`ohlcLoadFor: parsed summary:`, summary)
 
+  consoleInfo(`ohlcLoadFor: updating market in db for ${symbol}...`)
   await marketUpdate(summary)
 
+  consoleInfo(`ohlcLoadFor: saving opens/highs/lows/closes arrays to db...`)
   await db.opens.put(opens)
   await db.highs.put(highs)
   await db.lows.put(lows)
@@ -174,6 +200,7 @@ export async function controller(db: PriceSimulatorDexie, symbol: string | undef
   db.lowsCache[symbol] = lows.data
   db.closesCache[symbol] = closes.data
 
+  consoleInfo(`ohlcLoadFor: data loaded successfully for ${symbol}`)
   LOADING[symbol] = false
 }
 

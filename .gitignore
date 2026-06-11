@@ -26,3 +26,6 @@ dist-ssr
 # Copies of source data : include setup files as they change often
 public/prices/*
 public/rates/*
+
+.env
+,env.dev

@@ -98,9 +98,9 @@ export class PriceSimulatorDexie extends Dexie {
   ratesCache: Record<string, Array<number | null | undefined> | null | undefined> = {}
 
   constructor() {
-    super("PriceSimulator")
+    super("PriceSimulator_v11")
 
-    this.version(10).stores({
+    this.version(11).stores({
       timer: "guid",
 
       scenarios: "ref, name",
@@ -109,6 +109,12 @@ export class PriceSimulatorDexie extends Dexie {
 
       trades: "id, symbol, status, [symbol+status]",
       transactions: "reference,  timestamp",
+
+      opens: "symbol",
+      highs: "symbol",
+      lows: "symbol",
+      closes: "symbol",
+      rates: "code",
 
       marketHighs: "symbol",
       marketLows: "symbol",
@@ -159,19 +165,36 @@ export class PriceSimulatorDexie extends Dexie {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+import consoleInfo from "@/utilities/consoleInfo"
+
+console.log("[AppLog] db.ts: module execution started")
+
 const db = new PriceSimulatorDexie()
 
 db.on("ready", function () {
+  consoleInfo("db.on('ready') hook triggered. Calling applicationLoad(db)...")
   applicationLoad(db)
-  // window.addEventListener("onbeforeunload", async () => {
-  //   const id = db.guid
-  //   const collection = await db.status.limit(1)
-  //   const currentStatus = await collection.first()
-  //   const newStatus = { isTimerActive: false }
-  //   if (currentStatus?.id === id) {
-  //     await collection.modify({ ...currentStatus, ...newStatus, id })
-  //   }
-  // })
 })
+
+db.on("blocked", function (event) {
+  console.warn("[AppLog] db.on('blocked') event triggered! Another tab/connection is blocking database open/upgrade.", event)
+})
+
+db.on("versionchange", function () {
+  consoleInfo("db.on('versionchange') hook triggered. Closing db connection...")
+  db.close()
+  consoleInfo("db connection closed.")
+})
+
+console.log("[AppLog] db.ts: calling db.open() explicitly...")
+db.open()
+  .then(() => {
+    console.log("[AppLog] db.ts: db.open() resolved successfully.")
+  })
+  .catch((err) => {
+    console.error("[AppLog] db.ts: db.open() failed with error:", err)
+  })
+
+console.log("[AppLog] db.ts: module execution completed")
 
 export default db

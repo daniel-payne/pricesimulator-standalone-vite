@@ -65,7 +65,11 @@ export default function ClosesChart({ closes, price, range = "1m", name = "Close
     },
   ] as any
 
-  let startIndex = 9
+  // Find the first index where data actually exists so we never render the empty lead-in
+  const firstActiveIndex = closes.findIndex((v) => v != null)
+  const dataStart = firstActiveIndex >= 0 ? firstActiveIndex : 0
+
+  let startIndex = dataStart
 
   if (range === "1m") {
     startIndex = endDataIndex - 1 * 30
@@ -77,8 +81,9 @@ export default function ClosesChart({ closes, price, range = "1m", name = "Close
     startIndex = endDataIndex - 5 * 365
   }
 
-  if (startIndex < 0) {
-    startIndex = 0
+  // Never start before the first real data point
+  if (startIndex < dataStart) {
+    startIndex = dataStart
   }
 
   let pricePointValue

@@ -66,6 +66,9 @@ export default function HighLowChart({
   const displayLows = lows?.slice(0, endDataIndex + 1) ?? []
   const displayCloses = closes?.slice(0, endDataIndex + 1) ?? []
 
+  // Find the first index where data actually exists so we never render the empty lead-in
+  const firstActiveIndex = highs.findIndex((v) => v != null)
+
   const labels = highs.map((_, index) => index)
 
   const datasets = [] as any
@@ -159,11 +162,12 @@ export default function HighLowChart({
   } else if (range === "5y") {
     startIndex = startIndex - 5 * 365
   } else if (range === "at") {
-    startIndex = 0
+    startIndex = firstActiveIndex >= 0 ? firstActiveIndex : 0
   }
 
-  if (startIndex < 0) {
-    startIndex = 0
+  // Never start before the first real data point
+  if (startIndex < (firstActiveIndex >= 0 ? firstActiveIndex : 0)) {
+    startIndex = firstActiveIndex >= 0 ? firstActiveIndex : 0
   }
 
   let pricePointValue
